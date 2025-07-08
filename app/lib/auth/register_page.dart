@@ -498,7 +498,6 @@ class _RegisterPage extends State<RegisterPage> with TickerProviderStateMixin {
         ),
       ),
       description: Text(error),
-      position: MotionToastPosition.top,
       barrierColor: Colors.black.withOpacity(0.3),
       width: 300,
       height: 80,

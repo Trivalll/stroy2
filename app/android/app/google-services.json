@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "989284164146",
+    "project_id": "stroyapkproject24",
+    "storage_bucket": "stroyapkproject24.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989284164146:android:9b5c8f4f5fffb2284e522b",
+        "android_client_info": {
+          "package_name": "com.example.stroy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_ZLK1utIJnFFH0UsUv9EDzHmvhmNLLP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:989284164146:android:adbde06a05f22dab4e522b",
+        "android_client_info": {
+          "package_name": "com.thedeveloper.stroy_messanger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_ZLK1utIJnFFH0UsUv9EDzHmvhmNLLP0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

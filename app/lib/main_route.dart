@@ -93,6 +93,16 @@ class _MainRouteState extends State<MainRoute> {
         key: _sliderDrawerKey,
         sliderOpenSize: 80.w,
         appBar: SliderAppBar(
+          // ИЗМЕНЕНИЕ: Все параметры AppBar теперь находятся внутри объекта 'config'
+          config: SliderAppBarConfig(
+            backgroundColor: Colors.white,
+            padding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
+            title: Text(selectTab,
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+                style:
+                    TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700)),
             trailing: Padding(
               padding: EdgeInsets.only(right: 5.w),
               child: FutureBuilder(
@@ -134,16 +144,8 @@ class _MainRouteState extends State<MainRoute> {
                 },
               ),
             ),
-            appBarColor: Colors.white,
-            appBarPadding:
-                EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
-            appBarHeight: 15.h,
-            title: Text(selectTab,
-                maxLines: 1,
-                softWrap: false,
-                overflow: TextOverflow.ellipsis,
-                style:
-                    TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700))),
+          ),
+        ),
         slider: SliderBarMenu(
             userEntity: widget.userEntity,
             activeTab: selectTab,

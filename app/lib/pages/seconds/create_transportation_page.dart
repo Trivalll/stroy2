@@ -284,16 +284,18 @@ class _CreateTransportationState extends State<CreateTransportationPage> {
                     : DateFormat("dd MMMM y").format(dateTime1!),
                 onClick: () {
                   BottomPicker.date(
-                          title: S.of(context).date_pick,
+                          pickerTitle: Text(
+                            S.of(context).date_pick,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.sp,
+                                color: const Color(0xff317EFA)),
+                          ),
                           buttonContent: Text(
                             S.of(context).ok,
                             style: const TextStyle(color: Colors.white),
                           ),
                           buttonSingleColor: const Color(0xff317EFA),
-                          titleStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
-                              color: const Color(0xff317EFA)),
                           onSubmit: (index) {
                             dateTime1 = index;
                             setState(() {});
@@ -449,7 +451,6 @@ class _CreateTransportationState extends State<CreateTransportationPage> {
         ),
       ),
       description: Text(error),
-      position: MotionToastPosition.top,
       barrierColor: Colors.black.withOpacity(0.3),
       width: 300,
       height: 80,

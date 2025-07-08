@@ -581,7 +581,7 @@ class _ProfilePage extends State<ProfilePage> {
                                                       ),
                                                       onChanged: (country) {
                                                         initialCountry =
-                                                            country;
+                                                            country!;
                                                         initialCity = country
                                                             .cities.first;
                                                         state(() {});
@@ -611,7 +611,7 @@ class _ProfilePage extends State<ProfilePage> {
                                                             Colors.white,
                                                       ),
                                                       onChanged: (city) {
-                                                        initialCity = city;
+                                                        initialCity = city!;
                                                       },
                                                     )
                                                   ],
@@ -1092,8 +1092,8 @@ class _ProfilePage extends State<ProfilePage> {
 
   Future<double> convertToUsd(double kzt) async {
     DateTime date = DateTime.now();
-    String from = Currency.kzt;
-    String to = Currency.usd;
+    Currency from = Currency.kzt;
+    Currency to = Currency.usd;
     String url =
         "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${DateFormat("yyyy-MM-dd").format(date)}/v1/currencies/${from}.json";
     var response = await get(Uri.parse(url));

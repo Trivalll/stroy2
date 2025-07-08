@@ -284,20 +284,22 @@ class _CreateOrderTaxiState extends State<CreateOrderTaxi> {
                 width: 90.w,
                 hintText: dateTime1 == null
                     ? "Дата и время"
-                    : DateFormat("dd MMMM y").format(dateTime1!),
+                    : DateFormat("dd MMMM y HH:mm").format(dateTime1!),
                 onClick: () {
                   BottomPicker.dateTime(
                           use24hFormat: true,
-                          title: S.of(context).date_pick,
+                          pickerTitle: Text(
+                            S.of(context).date_pick,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.sp,
+                                color: const Color(0xff317EFA)),
+                          ),
                           buttonContent: Text(
                             S.of(context).ok,
                             style: const TextStyle(color: Colors.white),
                           ),
                           buttonSingleColor: const Color(0xff317EFA),
-                          titleStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
-                              color: const Color(0xff317EFA)),
                           onSubmit: (index) {
                             dateTime1 = index;
                             setState(() {});
@@ -385,7 +387,6 @@ class _CreateOrderTaxiState extends State<CreateOrderTaxi> {
         ),
       ),
       description: Text(error),
-      position: MotionToastPosition.top,
       barrierColor: Colors.black.withOpacity(0.3),
       width: 300,
       height: 80,

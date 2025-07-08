@@ -1,576 +1,490 @@
+import 'dart:convert';
+
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:app/api/RestClient.dart';
 import 'package:app/api/entity/CityEntity.dart';
-import 'package:app/api/entity/OrderEntity.dart';
+import 'package:app/api/entity/PropertiesEntity.dart';
 import 'package:app/api/entity/enums/Mode.dart';
-import 'package:app/api/entity/enums/OrderMode.dart';
 import 'package:app/generated/l10n.dart';
 import 'package:app/pages/seconds/create_cargo.dart';
-import 'package:app/pages/seconds/order_page.dart';
-import 'package:app/pages/seconds/user_profile.dart';
-import 'package:app/pages/transportation_page.dart';
 import 'package:app/utils/GlobalsColors.dart';
 import 'package:app/utils/GlobalsWidgets.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:bottom_picker/resources/arrays.dart';
-import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:motion_toast/motion_toast.dart';
+import 'package:motion_toast/resources/arrays.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:http/http.dart' as http;
 
-class SearchPage extends StatefulWidget {
-  final bool sub;
+class CreateTransportationPage extends StatefulWidget {
+  final Mode createMode;
   final CityEntity city;
-
-  const SearchPage({required this.sub, required this.city, super.key});
-
+  const CreateTransportationPage(
+      {required this.createMode, required this.city, super.key});
   @override
-  State<StatefulWidget> createState() => _SearchPageState();
+  State<StatefulWidget> createState() => _CreateTransportationState();
 }
 
-class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
-  Mode selectedMode = Mode.CITY;
-  CityEntity? otkuda;
-  CityEntity? kuda;
-  DateTime? date;
-  late TabController _controller;
-  @override
-  void initState() {
-    super.initState();
-    otkuda = widget.city;
-    _controller = TabController(length: 3, vsync: this);
-    WidgetsBinding.instance.addPostFrameCallback(
-        (_) => ChangeModeNotify(selectedMode).dispatch(context));
-  }
+class _CreateTransportationState extends State<CreateTransportationPage> {
+  TextEditingController controller = TextEditingController();
+  TextEditingController kudaController = TextEditingController();
+  DateTime? dateTime1;
+  String? description;
+  double price = 0;
+  CityEntity? kudaCity;
+  CityEntity? otkudaCity;
+  String? address1;
+  String? address2;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          EdgeInsets.symmetric(horizontal: 5.w, vertical: 3.h).copyWith(top: 0),
-      child: Column(
-        children: [
-          ButtonsTabBar(
-            controller: _controller,
-            backgroundColor: GlobalsColor.blue,
-            unselectedBackgroundColor: Colors.white,
-            unselectedLabelStyle: const TextStyle(color: Colors.black),
-            labelStyle: const TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold),
-            onTap: (index) {
-              selectedMode = Mode.values[index];
-              ChangeModeNotify(selectedMode).dispatch(context);
-              setState(() {});
-            },
-            tabs: [
-              Tab(
-                text: S.of(context).city,
+  void initState() {
+    otkudaCity = widget.city;
+    super.initState();
+  }
+
+  Widget _selectCity() {
+    Dio dio = Dio();
+    RestClient client = RestClient(dio);
+    return FutureBuilder(
+        future: client.findCountryByCity(widget.city.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            int item = 0;
+            for (int i = 0; i < snapshot.data!.cities.length; i++) {
+              if (snapshot.data!.cities[i].id == otkudaCity!.id) {
+                item = i;
+                break;
+              }
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _smallTitle("Откуда"),
+                Padding(
+                  padding: EdgeInsets.only(right: 5.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                          width: 5.w,
+                          child: const Center(
+                            child: Text(
+                              "*",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.redAccent),
+                            ),
+                          )),
+                      Expanded(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Text(
+                            S.of(context).select_city,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                          SizedBox(
+                            height: 1.h,
+                          ),
+                          CustomDropdown<CityEntity>(
+                            items: snapshot.data!.cities,
+                            initialItem: snapshot.data!.cities[item],
+                            hintText: S.of(context).select_city,
+                            decoration: CustomDropdownDecoration(
+                              closedBorder:
+                                  Border.all(color: const Color(0xffD9D9D9)),
+                              closedFillColor: Colors.transparent,
+                              expandedBorder:
+                                  Border.all(color: const Color(0xffD9D9D9)),
+                              expandedFillColor: Colors.white,
+                            ),
+                            onChanged: (city) {
+                              otkudaCity = city;
+                            },
+                          )
+                        ],
+                      ))
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 1.h,
+                ),
+                _smallTitle("Куда"),
+                Padding(
+                  padding: EdgeInsets.only(right: 5.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                          width: 5.w,
+                          child: const Center(
+                            child: Text(
+                              "*",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.redAccent),
+                            ),
+                          )),
+                      Expanded(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 2.h,
+                          ),
+                          Text(
+                            S.of(context).select_city,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black.withOpacity(0.5)),
+                          ),
+                          SizedBox(
+                            height: 1.h,
+                          ),
+                          CustomDropdown<CityEntity>(
+                            items: snapshot.data!.cities,
+                            hintText: S.of(context).select_city,
+                            decoration: CustomDropdownDecoration(
+                              closedBorder:
+                                  Border.all(color: const Color(0xffD9D9D9)),
+                              closedFillColor: Colors.transparent,
+                              expandedBorder:
+                                  Border.all(color: const Color(0xffD9D9D9)),
+                              expandedFillColor: Colors.white,
+                            ),
+                            onChanged: (city) {
+                              kudaCity = city;
+                            },
+                          )
+                        ],
+                      ))
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Text("Загрузка");
+          }
+        });
+  }
+
+  Widget selectAddress() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 5.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Можно записать номер дома через запятую",
+                style: TextStyle(
+                    fontSize: 14.sp, color: Colors.black.withOpacity(0.5)),
               ),
-              Tab(
-                text: S.of(context).no_city,
+              Text(
+                "(Пример: Лесная,8)",
+                style: TextStyle(
+                    fontSize: 14.sp, color: Colors.black.withOpacity(0.5)),
               ),
-              Tab(
-                text: S.of(context).poput,
-              )
             ],
           ),
-          _getBody(selectedMode)
-        ],
+        ),
+        _smallTitle("Откуда"),
+        SizedBox(
+          height: 1.h,
+        ),
+        InputWidget(
+          readOnly: false,
+          required: true,
+          width: 90.w,
+          hintText: "Улица",
+          onChange: (value) {
+            address1 = value;
+          },
+        ),
+        _smallTitle("Куда"),
+        SizedBox(
+          height: 1.h,
+        ),
+        InputWidget(
+          readOnly: false,
+          required: true,
+          width: 90.w,
+          hintText: "Улица",
+          onChange: (value) {
+            address2 = value;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _smallTitle(String title) {
+    return Padding(
+      padding: EdgeInsets.only(left: 5.w),
+      child: Text(
+        title,
+        style: TextStyle(
+            fontSize: 16.sp,
+            color: const Color(0xff797979),
+            fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _getBody(Mode mode) {
-    switch (mode) {
-      case Mode.NONE:
-        return Expanded(
-            child: SizedBox(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 20.h),
-              child: Column(
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("Create transportation mode ${widget.createMode}");
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(S.of(context).add,
+            style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.w700)),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 8.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _bigTitle(S.of(context).create_1),
+              SizedBox(
+                height: 1.h,
+              ),
+              widget.createMode == Mode.OUTCITY
+                  ? _selectCity()
+                  : selectAddress(),
+              SizedBox(
+                height: 2.h,
+              ),
+              _bigTitle(S.of(context).create_4),
+              SizedBox(
+                height: 1.h,
+              ),
+              InputWidget(
+                readOnly: true,
+                required: false,
+                width: 90.w,
+                hintText: dateTime1 == null
+                    ? S.of(context).date_create
+                    : DateFormat("dd MMMM y").format(dateTime1!),
+                onClick: () {
+                  BottomPicker.date(
+                          pickerTitle: Text(
+                            S.of(context).date_pick,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.sp,
+                                color: const Color(0xff317EFA)),
+                          ),
+                          buttonContent: Text(
+                            S.of(context).ok,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          buttonSingleColor: const Color(0xff317EFA),
+                          onSubmit: (index) {
+                            dateTime1 = index;
+                            setState(() {});
+                          },
+                          bottomPickerTheme: BottomPickerTheme.morningSalad)
+                      .show(context);
+                },
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              _requiredBigTitle(S.of(context).desc),
+              SizedBox(
+                height: 1.h,
+              ),
+              InputWidget(
+                maxLength: 200,
+                required: false,
+                height: 30.h,
+                width: 90.w,
+                hintText: S.of(context).desc,
+                onChange: (value) {
+                  description = value;
+                },
+              ),
+              SizedBox(
+                height: 2.h,
+              ),
+              _requiredBigTitle(S.of(context).pay),
+              SizedBox(
+                height: 1.h,
+              ),
+              Row(
                 children: [
-                  FutureBuilder(
-                      future:
-                          RestClient(Dio()).findCountryByCity(widget.city.id),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Column(
-                            children: [
-                              Stack(
-                                alignment: Alignment.centerRight,
-                                children: [
-                                  SizedBox(
-                                    child: Column(
-                                      children: [
-                                        CustomDropdown<CityEntity>(
-                                          items: snapshot.data!.cities,
-                                          initialItem: otkuda,
-                                          hintText: S.of(context).select_city,
-                                          decoration: CustomDropdownDecoration(
-                                            closedBorder: Border.all(
-                                                color: const Color(0xffD9D9D9)),
-                                            closedFillColor: Colors.transparent,
-                                            expandedBorder: Border.all(
-                                                color: const Color(0xffD9D9D9)),
-                                            expandedFillColor: Colors.white,
-                                          ),
-                                          onChanged: (city) {
-                                            otkuda = city;
-                                            setState(() {});
-                                          },
-                                        ),
-                                        SizedBox(
-                                          height: 2.h,
-                                        ),
-                                        CustomDropdown<CityEntity>(
-                                          items: snapshot.data!.cities,
-                                          initialItem: kuda,
-                                          hintText: S.of(context).select_city,
-                                          decoration: CustomDropdownDecoration(
-                                            closedBorder: Border.all(
-                                                color: const Color(0xffD9D9D9)),
-                                            closedFillColor: Colors.transparent,
-                                            expandedBorder: Border.all(
-                                                color: const Color(0xffD9D9D9)),
-                                            expandedFillColor: Colors.white,
-                                          ),
-                                          onChanged: (city) {
-                                            kuda = city;
-                                            setState(() {});
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                      padding: EdgeInsets.only(right: 10.w),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          if (otkuda != null && kuda != null) {
-                                            CityEntity temp = otkuda!;
-                                            otkuda = kuda;
-                                            kuda = temp;
-                                          }
-                                          setState(() {});
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(1000),
-                                              border: Border.all(
-                                                  color:
-                                                      const Color(0xffD9D9D9))),
-                                          padding: EdgeInsets.all(2.w),
-                                          child: RotatedBox(
-                                            quarterTurns: 1,
-                                            child: Icon(
-                                                size: 8.w,
-                                                Icons.swap_horiz_outlined),
-                                          ),
-                                        ),
-                                      )),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 2.h,
-                              ),
-                              SizedBox(
-                                width: double.maxFinite,
-                                child: InputWidget(
-                                  readOnly: true,
-                                  required: false,
-                                  showRequired: false,
-                                  width: 100.w - 10.w,
-                                  prefixIcon: const Icon(
-                                    Icons.edit_calendar_outlined,
-                                    color: Colors.black,
-                                  ),
-                                  hintText: date == null
-                                      ? "Дата отправления"
-                                      : DateFormat("dd MMMM y").format(date!),
-                                  onClick: () {
-                                    BottomPicker.date(
-                                            title: S.of(context).date_pick,
-                                            buttonContent: Text(
-                                              S.of(context).ok,
-                                              style: const TextStyle(
-                                                  color: Colors.white),
-                                            ),
-                                            buttonSingleColor:
-                                                const Color(0xff317EFA),
-                                            titleStyle: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16.sp,
-                                                color: const Color(0xff317EFA)),
-                                            onSubmit: (index) {
-                                              date = index;
-                                              setState(() {});
-                                            },
-                                            bottomPickerTheme:
-                                                BottomPickerTheme.morningSalad)
-                                        .show(context);
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      }),
-                  SizedBox(
-                    height: 2.h,
+                  InputWidget(
+                    required: false,
+                    width: 25.w,
+                    hintText: S.of(context).sum,
+                    onChange: (value) {
+                      price = double.parse(value);
+                    },
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: TextInputType.number,
                   ),
-                  (kuda != null && otkuda != null)
-                      ? FutureBuilder(
-                          future: RestClient(Dio()).searchOrders(
-                              OrderMode.NEW, kuda!.id, otkuda!.id),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              List<OrderEntity> orders = snapshot.data!;
-                              return ListView.separated(
-                                  shrinkWrap: true,
-                                  primary: false,
-                                  itemBuilder: (context, index) {
-                                    OrderEntity currentOrder = orders[index];
-                                    return Container(
-                                      child: IntrinsicHeight(
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: 8.h,
-                                              child: Column(
-                                                children: [
-                                                  ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            1000),
-                                                    child: Image.network(
-                                                        height: 8.h,
-                                                        width: 8.h,
-                                                        fit: BoxFit.cover,
-                                                        GlobalsWidgets.getPhoto(
-                                                            currentOrder.creator
-                                                                .photo)),
-                                                  ),
-                                                  Text(
-                                                      "${currentOrder.creator.name} ${currentOrder.creator.surname}")
-                                                ],
-                                              ),
-                                            ),
-                                            const VerticalDivider(
-                                              color: Colors.black,
-                                            ),
-                                            Expanded(
-                                                child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(currentOrder
-                                                    .addressFrom.city),
-                                                Text(currentOrder
-                                                    .addressTo.city),
-                                                Divider(
-                                                  color: Colors.black
-                                                      .withOpacity(0.2),
-                                                  height: 1,
-                                                ),
-                                                Text("${currentOrder.price} ₸"),
-                                                Divider(
-                                                  color: Colors.black
-                                                      .withOpacity(0.2),
-                                                  height: 1,
-                                                ),
-                                                Text(DateFormat("d MMMM, HH:mm")
-                                                    .format(currentOrder
-                                                        .startDate)),
-                                                Divider(
-                                                  color: Colors.black
-                                                      .withOpacity(0.2),
-                                                  height: 1,
-                                                ),
-                                                Text(currentOrder.description!),
-                                                Divider(
-                                                  color: Colors.black
-                                                      .withOpacity(0.2),
-                                                  height: 1,
-                                                ),
-                                                Text(
-                                                    "Создано: ${DateFormat("d MMMM, HH:mm").format(currentOrder.createDate)}")
-                                              ],
-                                            )),
-                                            const VerticalDivider(
-                                              color: Colors.black,
-                                            ),
-                                            CircleAvatar(
-                                              radius: 8.w,
-                                              backgroundColor:
-                                                  GlobalsColor.blue,
-                                              child: IconButton(
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                UserProfile(
-                                                                    user: currentOrder
-                                                                        .creator)));
-                                                  },
-                                                  icon: const Icon(
-                                                    Icons.person,
-                                                    color: Colors.white,
-                                                  )),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  separatorBuilder: (context, index) {
-                                    return Divider(
-                                      height: 2.h,
-                                      color: Colors.black,
-                                    );
-                                  },
-                                  itemCount: orders.length);
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          })
-                      : const SizedBox.shrink()
+                  InputWidget(
+                      readOnly: true,
+                      required: false,
+                      width: 15.w,
+                      hintText: "₸"),
                 ],
               ),
-            ),
-          ),
-        ));
-      case Mode.CITY:
-        return Expanded(
-            child: SizedBox(
-          child: FutureBuilder(
-            future: getActiveOrders(false),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<OrderEntity> list = snapshot.data!;
-                return ListView.separated(
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    OrderEntity order = list[index];
-                    return InkWell(
-                      onTap: widget.sub
-                          ? () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          OrderPage(order: order)))
-                                  .then((value) {
-                                setState(() {});
-                              });
+              SizedBox(
+                height: 2.h,
+              ),
+              SizedBox(
+                width: 90.w,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 5.w),
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          backgroundColor: GlobalsColor.blue,
+                          side: BorderSide.none,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(9),
+                              side: BorderSide.none)),
+                      onPressed: () async {
+                        Dio dio = Dio();
+                        RestClient client = RestClient(dio);
+                        bool outcity = false;
+                        if (widget.createMode == Mode.OUTCITY) {
+                          outcity = true;
+                        }
+                        if ((outcity &&
+                                dateTime1 != null &&
+                                description != null &&
+                                price > 0 &&
+                                kudaCity != null &&
+                                otkudaCity != null) ||
+                            (!outcity &&
+                                dateTime1 != null &&
+                                description != null &&
+                                price > 0 &&
+                                address1 != null &&
+                                address2 != null)) {
+                          if (!outcity) {
+                            kudaCity = otkudaCity;
+                          }
+                          String city1 = otkudaCity!.name,
+                              city2 = kudaCity!.name;
+                          String? house1, house2;
+                          String? street1, street2;
+                          if (!outcity) {
+                            var tempAddress1 = address1!.split(",");
+                            var tempAddress2 = address2!.split(",");
+                            if (tempAddress1.length > 1) {
+                              street1 = tempAddress1[0];
+                              if (tempAddress1[1].isNotEmpty) {
+                                house1 = tempAddress1[1];
+                              }
+                            } else {
+                              street1 = address1;
                             }
-                          : null,
-                      child: Container(
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(9),
-                            color: const Color(0xff787878)),
-                        child: Padding(
-                          padding: EdgeInsets.all(2.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "${order.addressFrom.street}${order.addressFrom.house != null ? "," : ""} ${order.addressFrom.house ?? ""} ->",
-                                    style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "${order.price.round()} ₸",
-                                    style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                      "${order.addressTo.street}${order.addressFrom.street != null ? "," : ""} ${order.addressTo.house ?? ""}",
-                                      style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold))
-                                ],
-                              ),
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "${DateFormat("dd EE.").format(order.startDate.toLocal())} - ${DateFormat("dd EE, MMM").format(order.endDate.toLocal())}",
-                                    style: TextStyle(
-                                        color: const Color(0xffCFCFCF),
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    DateFormat("dd MMM")
-                                        .format(order.createDate.toLocal()),
-                                    style: TextStyle(
-                                        color: const Color(0xffCFCFCF),
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return SizedBox(
-                      height: 2.h,
-                    );
-                  },
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
-          ),
-        ));
-      case Mode.OUTCITY:
-        return Expanded(
-            child: SizedBox(
-          child: FutureBuilder(
-            future: getActiveOrders(true),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                List<OrderEntity> list = snapshot.data!;
-                return ListView.separated(
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    OrderEntity order = list[index];
-                    return InkWell(
-                      onTap: widget.sub
-                          ? () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          OrderPage(order: order)))
-                                  .then((value) {
-                                setState(() {});
-                              });
+                            if (tempAddress2.length > 1) {
+                              street2 = tempAddress2[0];
+                              if (tempAddress2[1].isNotEmpty) {
+                                house2 = tempAddress2[1];
+                              }
+                            } else {
+                              street2 = address2;
                             }
-                          : null,
-                      child: Container(
-                        width: double.maxFinite,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(9),
-                            color: const Color(0xff787878)),
-                        child: Padding(
-                          padding: EdgeInsets.all(2.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "${order.addressFrom.city} ->",
-                                    style: TextStyle(
-                                        fontSize: 14.sp,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    "${order.price.round()} ₸",
-                                    style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              Row(
-                                children: [
-                                  Text(order.addressTo.city,
-                                      style: TextStyle(
-                                          fontSize: 14.sp,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold))
-                                ],
-                              ),
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "${DateFormat("dd EE.").format(order.startDate.toLocal())} - ${DateFormat("dd EE, MMM").format(order.endDate.toLocal())}",
-                                    style: TextStyle(
-                                        color: const Color(0xffCFCFCF),
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Text(
-                                    DateFormat("dd MMM")
-                                        .format(order.createDate.toLocal()),
-                                    style: TextStyle(
-                                        color: const Color(0xffCFCFCF),
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return SizedBox(
-                      height: 2.h,
-                    );
-                  },
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            },
+                          }
+                          AddressModel addressFrom =
+                              AddressModel(street1, house1, city1);
+                          AddressModel addressTo =
+                              AddressModel(street2, house2, city2);
+                          debugPrint("addressFrom $addressFrom");
+                          debugPrint("addressTo $addressTo");
+                          PropertiesModel properties =
+                              PropertiesModel(addressTo, addressFrom);
+                          client
+                              .createTransporting(GlobalsWidgets.uid, price,
+                                  description!, outcity, dateTime1!, properties)
+                              .then((value) {
+                            Navigator.pop(context);
+                          }).onError((error, stackTrace) {
+                            if (error is DioException) {
+                              _displayErrorMotionToast(error.message!);
+                            }
+                          });
+                        } else {
+                          _displayErrorMotionToast(S.of(context).warning_1);
+                        }
+                      },
+                      child: Text(
+                        S.of(context).save_,
+                        style: const TextStyle(color: Colors.white),
+                      )),
+                ),
+              )
+            ],
           ),
-        ));
-    }
+        ),
+      ),
+    );
   }
 
-  Future<List<OrderEntity>> getActiveOrders(bool out) {
-    Dio dio = Dio();
-    RestClient client = RestClient(dio);
-    return client.activeOrders(GlobalsWidgets.uid, out);
+  void _displayErrorMotionToast(String error) {
+    MotionToast.error(
+      title: Text(
+        S.of(context).error,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      description: Text(error),
+      barrierColor: Colors.black.withOpacity(0.3),
+      width: 300,
+      height: 80,
+      dismissable: true,
+    ).show(context);
+  }
+
+  Widget _requiredBigTitle(String title) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 5.w,
+          child: const Text(
+            "*",
+            textAlign: TextAlign.center,
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.redAccent),
+          ),
+        ),
+        Text(
+          title,
+          style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+        )
+      ],
+    );
+  }
+
+  Widget _bigTitle(String title) {
+    return Padding(
+      padding: EdgeInsets.only(left: 5.w),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+      ),
+    );
   }
 }

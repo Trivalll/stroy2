@@ -17,8 +17,10 @@ class PreloadPage extends StatefulWidget {
 
 class _PreloadPageState extends State<PreloadPage> {
   int activeTab = 0;
-  final GlobalKey<SliderDrawerState> _sliderDrawerKey = GlobalKey<SliderDrawerState>();
-  final GlobalKey<TransportationPageState> _transportationKey = GlobalKey<TransportationPageState>();
+  final GlobalKey<SliderDrawerState> _sliderDrawerKey =
+      GlobalKey<SliderDrawerState>();
+  final GlobalKey<TransportationPageState> _transportationKey =
+      GlobalKey<TransportationPageState>();
   String selectTab = "";
   List<String> pages = [];
   @override
@@ -36,7 +38,19 @@ class _PreloadPageState extends State<PreloadPage> {
       body: SliderDrawer(
         key: _sliderDrawerKey,
         sliderOpenSize: 80.w,
-        appBar: SliderAppBar(appBarColor: Colors.white, appBarPadding: EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top), appBarHeight: 15.h, title: Text(selectTab, maxLines: 1, softWrap: false, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700))),
+        // ИЗМЕНЕНИЕ: Все параметры AppBar теперь внутри 'SliderAppBarConfig'
+        appBar: SliderAppBar(
+          config: SliderAppBarConfig(
+            backgroundColor: Colors.white,
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
+            title: Text(selectTab,
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w700)),
+          ),
+        ),
         slider: SliderBarMenuPreload(
             activeTab: selectTab,
             onClickItem: (title) {

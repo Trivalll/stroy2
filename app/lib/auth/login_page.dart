@@ -438,7 +438,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       description: Text(error),
-      position: MotionToastPosition.top,
       barrierColor: Colors.black.withOpacity(0.3),
       width: 300,
       height: 80,
