@@ -70,7 +70,7 @@ class _ProfilePage extends State<ProfilePage> {
                     height: 60.h,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: const Color(0xff317EFA)),
+                        color: GlobalsColor.blue),
                     child: Padding(
                       padding: EdgeInsets.all(3.h),
                       child: Column(
@@ -520,7 +520,9 @@ class _ProfilePage extends State<ProfilePage> {
                                     CountryEntity userCountry = await client
                                         .findCountryByCity(user.city.id);
 
-                                    CountryEntity initialCountry = list.first;
+                                    CountryEntity initialCountry =
+                                        list.firstWhere(
+                                            (e) => e.id == userCountry.id);
                                     CityEntity initialCity =
                                         initialCountry.cities.first;
                                     for (int i = 0; i < list.length; i++) {
@@ -821,7 +823,7 @@ class _ProfilePage extends State<ProfilePage> {
                                   borderRadius: const BorderRadius.all(
                                       Radius.circular(12)),
                                   color: selectedLanguage.languageCode == "kk"
-                                      ? Color(0xffffdb54)
+                                      ? Color(0xff317EFA)
                                       : Colors.transparent),
                               child: const Padding(
                                 padding: EdgeInsets.symmetric(
@@ -829,7 +831,8 @@ class _ProfilePage extends State<ProfilePage> {
                                 child: Center(
                                   child: Text(
                                     "Қаз",
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
                                   ),
                                 ),
                               )),
@@ -853,7 +856,7 @@ class _ProfilePage extends State<ProfilePage> {
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(12)),
                                 color: selectedLanguage.languageCode == "ru"
-                                    ? Color(0xffffdb54)
+                                    ? Color(0xff317EFA)
                                     : Colors.transparent),
                             child: const Padding(
                               padding: EdgeInsets.symmetric(
@@ -861,7 +864,8 @@ class _ProfilePage extends State<ProfilePage> {
                               child: Center(
                                 child: Text(
                                   "Рус",
-                                  style: TextStyle(fontSize: 16),
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
                                 ),
                               ),
                             ),

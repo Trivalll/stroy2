@@ -2,6 +2,7 @@ import 'package:app/api/RestClient.dart';
 import 'package:app/api/entity/UserEntity.dart';
 import 'package:app/generated/l10n.dart';
 import 'package:app/pages/seconds/chat_page.dart';
+import 'package:app/utils/GlobalsColors.dart';
 import 'package:app/utils/GlobalsWidgets.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,8 @@ class UserProfile extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(S.of(context).user, style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w700)),
+        title: Text(S.of(context).user,
+            style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.w700)),
       ),
       body: Padding(
         padding: EdgeInsets.all(2.h),
@@ -29,7 +31,7 @@ class UserProfile extends StatelessWidget {
               width: double.maxFinite,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: const Color(0xff317EFA),
+                color: GlobalsColor.blue,
               ),
               child: Padding(
                 padding: EdgeInsets.all(2.h),
@@ -38,7 +40,9 @@ class UserProfile extends StatelessWidget {
                     ClipOval(
                       child: SizedBox.fromSize(
                         size: const Size.fromRadius(50), // Image radius
-                        child: Image.network(GlobalsWidgets.getPhoto(user.photo), fit: BoxFit.cover),
+                        child: Image.network(
+                            GlobalsWidgets.getPhoto(user.photo),
+                            fit: BoxFit.cover),
                       ),
                     ),
                     SizedBox(
@@ -46,7 +50,10 @@ class UserProfile extends StatelessWidget {
                     ),
                     Text(
                       "${user.name} ${user.surname}",
-                      style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       height: 1.h,
@@ -70,19 +77,28 @@ class UserProfile extends StatelessWidget {
                         SizedBox(
                           width: 3.w,
                         ),
-                        Text("${user.city}", style: TextStyle(fontSize: 18.sp, color: Colors.white))
+                        Text("${user.city}",
+                            style:
+                                TextStyle(fontSize: 18.sp, color: Colors.white))
                       ],
                     ),
                     const Spacer(),
-                    (GlobalsWidgets.uid != user.uid && user.telegram != null && user.telegram!.isNotEmpty)
+                    (GlobalsWidgets.uid != user.uid &&
+                            user.telegram != null &&
+                            user.telegram!.isNotEmpty)
                         ? SizedBox(
                             width: double.maxFinite,
                             height: 5.h,
                             child: OutlinedButton(
                                 onPressed: () {
-                                  launchUrl(Uri.parse("https://t.me/${user.telegram}"), mode: LaunchMode.externalApplication);
+                                  launchUrl(
+                                      Uri.parse(
+                                          "https://t.me/${user.telegram}"),
+                                      mode: LaunchMode.externalApplication);
                                 },
-                                style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.white)),
+                                style: OutlinedButton.styleFrom(
+                                    side:
+                                        const BorderSide(color: Colors.white)),
                                 child: const Text(
                                   "Telegram",
                                   style: TextStyle(color: Colors.white),
@@ -94,15 +110,22 @@ class UserProfile extends StatelessWidget {
                             height: 1.h,
                           )
                         : const SizedBox.shrink(),
-                    (GlobalsWidgets.uid != user.uid && user.whatsapp != null && user.whatsapp!.isNotEmpty)
+                    (GlobalsWidgets.uid != user.uid &&
+                            user.whatsapp != null &&
+                            user.whatsapp!.isNotEmpty)
                         ? SizedBox(
                             width: double.maxFinite,
                             height: 5.h,
                             child: OutlinedButton(
                                 onPressed: () {
-                                  launchUrl(Uri.parse("https://wa.me/${user.whatsapp}"), mode: LaunchMode.externalApplication);
+                                  launchUrl(
+                                      Uri.parse(
+                                          "https://wa.me/${user.whatsapp}"),
+                                      mode: LaunchMode.externalApplication);
                                 },
-                                style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.white)),
+                                style: OutlinedButton.styleFrom(
+                                    side:
+                                        const BorderSide(color: Colors.white)),
                                 child: const Text(
                                   "WhatsApp",
                                   style: TextStyle(color: Colors.white),
@@ -122,11 +145,23 @@ class UserProfile extends StatelessWidget {
                                 onPressed: () {
                                   Dio dio = Dio();
                                   RestClient client = RestClient(dio);
-                                  client.findChat(GlobalsWidgets.uid, user.uid, null).then((value) {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomChatPage(showTitle: true, title: user.name, chatName: value)));
+                                  client
+                                      .findChat(
+                                          GlobalsWidgets.uid, user.uid, null)
+                                      .then((value) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CustomChatPage(
+                                                    showTitle: true,
+                                                    title: user.name,
+                                                    chatName: value)));
                                   });
                                 },
-                                style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.white)),
+                                style: OutlinedButton.styleFrom(
+                                    side:
+                                        const BorderSide(color: Colors.white)),
                                 child: Text(
                                   S.of(context).typing,
                                   style: const TextStyle(color: Colors.white),
@@ -144,10 +179,12 @@ class UserProfile extends StatelessWidget {
                                 onPressed: () {
                                   launchUrl(Uri.parse("tel://+${user.phone}"));
                                 },
-                                style: OutlinedButton.styleFrom(side: BorderSide.none, backgroundColor: Colors.white),
+                                style: OutlinedButton.styleFrom(
+                                    side: BorderSide.none,
+                                    backgroundColor: Colors.white),
                                 child: Text(
                                   S.of(context).call,
-                                  style: const TextStyle(color: Color(0xff317EFA)),
+                                  style: TextStyle(color: GlobalsColor.blue),
                                 )),
                           )
                         : const SizedBox.shrink()

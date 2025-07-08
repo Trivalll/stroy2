@@ -50,111 +50,311 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
-  /// `Грузоперевозки`
+  /// `Сварщики`
   String get page1 {
     return Intl.message(
-      'Грузоперевозки',
+      'Сварщики',
       name: 'page1',
       desc: '',
       args: [],
     );
   }
 
-  /// `Поиск груза`
+  /// `Бетонщики`
   String get page2 {
     return Intl.message(
-      'Поиск груза',
+      'Бетонщики',
       name: 'page2',
       desc: '',
       args: [],
     );
   }
 
-  /// `Найти эвакуатор`
+  /// `Бульдозерист`
   String get page3 {
     return Intl.message(
-      'Найти эвакуатор',
+      'Бульдозерист',
       name: 'page3',
       desc: '',
       args: [],
     );
   }
 
-  /// `Справочник`
+  /// `Мебельщики`
   String get page4 {
     return Intl.message(
-      'Справочник',
+      'Мебельщики',
       name: 'page4',
       desc: '',
       args: [],
     );
   }
 
-  /// `СТО`
+  /// `Разнорабочий`
   String get page5 {
     return Intl.message(
-      'СТО',
+      'Разнорабочий',
       name: 'page5',
       desc: '',
       args: [],
     );
   }
 
-  /// `Переоборудование`
+  /// `Слесарь`
   String get page6 {
     return Intl.message(
-      'Переоборудование',
+      'Слесарь',
       name: 'page6',
       desc: '',
       args: [],
     );
   }
 
-  /// `Авторазбор`
+  /// `Проектировщик`
   String get page7 {
     return Intl.message(
-      'Авторазбор',
+      'Проектировщик',
       name: 'page7',
       desc: '',
       args: [],
     );
   }
 
-  /// `Свап`
+  /// `Газовщик`
   String get page8 {
     return Intl.message(
-      'Свап',
+      'Газовщик',
       name: 'page8',
       desc: '',
       args: [],
     );
   }
 
-  /// `Авторынок`
+  /// `Стекольщик`
   String get page9 {
     return Intl.message(
-      'Авторынок',
+      'Стекольщик',
       name: 'page9',
       desc: '',
       args: [],
     );
   }
 
-  /// `Грузчики`
+  /// `Паркетчик`
   String get page10 {
     return Intl.message(
-      'Грузчики',
+      'Паркетчик',
       name: 'page10',
       desc: '',
       args: [],
     );
   }
 
-  /// `Автосалон`
+  /// `Электрики`
   String get page11 {
     return Intl.message(
-      'Автосалон',
+      'Электрики',
       name: 'page11',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Вентиляционщики`
+  String get page12 {
+    return Intl.message(
+      'Вентиляционщики',
+      name: 'page12',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Вывоз строительного мусора`
+  String get page13 {
+    return Intl.message(
+      'Вывоз строительного мусора',
+      name: 'page13',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Токарь`
+  String get page14 {
+    return Intl.message(
+      'Токарь',
+      name: 'page14',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Фрезеровщики`
+  String get page15 {
+    return Intl.message(
+      'Фрезеровщики',
+      name: 'page15',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Маляр штукатур`
+  String get page16 {
+    return Intl.message(
+      'Маляр штукатур',
+      name: 'page16',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Землекоп`
+  String get page17 {
+    return Intl.message(
+      'Землекоп',
+      name: 'page17',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Облицовщики`
+  String get page18 {
+    return Intl.message(
+      'Облицовщики',
+      name: 'page18',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Столяры`
+  String get page19 {
+    return Intl.message(
+      'Столяры',
+      name: 'page19',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Геодезист`
+  String get page20 {
+    return Intl.message(
+      'Геодезист',
+      name: 'page20',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Плотники`
+  String get page21 {
+    return Intl.message(
+      'Плотники',
+      name: 'page21',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Сантехники`
+  String get page22 {
+    return Intl.message(
+      'Сантехники',
+      name: 'page22',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Стропальщики`
+  String get page23 {
+    return Intl.message(
+      'Стропальщики',
+      name: 'page23',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Крановщики`
+  String get page24 {
+    return Intl.message(
+      'Крановщики',
+      name: 'page24',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Каменщики`
+  String get page25 {
+    return Intl.message(
+      'Каменщики',
+      name: 'page25',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Печники`
+  String get page26 {
+    return Intl.message(
+      'Печники',
+      name: 'page26',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Монтажники`
+  String get page27 {
+    return Intl.message(
+      'Монтажники',
+      name: 'page27',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Кровельщики`
+  String get page28 {
+    return Intl.message(
+      'Кровельщики',
+      name: 'page28',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Отделочники`
+  String get page29 {
+    return Intl.message(
+      'Отделочники',
+      name: 'page29',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Моторист`
+  String get page30 {
+    return Intl.message(
+      'Моторист',
+      name: 'page30',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Другое`
+  String get page31 {
+    return Intl.message(
+      'Другое',
+      name: 'page31',
       desc: '',
       args: [],
     );
@@ -863,17 +1063,17 @@ class S {
   /// `Пользователь`
   String get user_role_1 {
     return Intl.message(
-      'Пользователь',
+      'Работодатель',
       name: 'user_role_1',
       desc: '',
       args: [],
     );
   }
 
-  /// `Перевозчик`
+  /// `Специалист`
   String get user_role_2 {
     return Intl.message(
-      'Перевозчик',
+      'Специалист',
       name: 'user_role_2',
       desc: '',
       args: [],
@@ -990,10 +1190,10 @@ class S {
     );
   }
 
-  /// `Стать перевозчиком`
+  /// `Стать специалистом`
   String get preload_page2 {
     return Intl.message(
-      'Стать перевозчиком',
+      'Стать специалистом',
       name: 'preload_page2',
       desc: '',
       args: [],

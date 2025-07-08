@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:app/api/RestClient.dart';
@@ -28,6 +29,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainRoute extends StatefulWidget {
   const MainRoute({super.key, required this.userEntity});
@@ -58,20 +60,80 @@ class _MainRouteState extends State<MainRoute> {
       S.of(context).page4,
       S.of(context).page5,
       S.of(context).page6,
+      S.of(context).page7,
       S.of(context).page8,
+      S.of(context).page9,
+      S.of(context).page10,
       S.of(context).page11,
+      S.of(context).page12,
+      S.of(context).page13,
+      S.of(context).page14,
+      S.of(context).page15,
+      S.of(context).page16,
+      S.of(context).page17,
+      S.of(context).page18,
+      S.of(context).page19,
+      S.of(context).page20,
+      S.of(context).page21,
+      S.of(context).page22,
+      S.of(context).page23,
+      S.of(context).page24,
+      S.of(context).page25,
+      S.of(context).page26,
+      S.of(context).page27,
+      S.of(context).page28,
+      S.of(context).page29,
+      S.of(context).page30,
+      S.of(context).page31,
       "Чат"
     ];
-    if (widget.userEntity.role == UserRole.SPECIALIST && activeTab == 0) {
-      activeTab = 1;
-    }
     selectTab = pages[activeTab];
     return Scaffold(
-      floatingActionButton: _getFloatButton(getIndex(context, selectTab)),
       body: SliderDrawer(
         key: _sliderDrawerKey,
         sliderOpenSize: 80.w,
         appBar: SliderAppBar(
+            trailing: Padding(
+              padding: EdgeInsets.only(right: 5.w),
+              child: FutureBuilder(
+                future: SharedPreferences.getInstance(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    bool notify = snapshot.data!.getBool(GlobalsWidgets
+                            .chats[getIndex(context, selectTab)]) ??
+                        false;
+                    log("[${GlobalsWidgets.chats[getIndex(context, selectTab)]}] = [$notify]");
+                    if (notify) {
+                      return IconButton(
+                        onPressed: () async {
+                          await snapshot.data!.setBool(
+                              GlobalsWidgets
+                                  .chats[getIndex(context, selectTab)],
+                              false);
+                          log("[${GlobalsWidgets.chats[getIndex(context, selectTab)]}] = false");
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.notifications),
+                      );
+                    } else {
+                      return IconButton(
+                        onPressed: () async {
+                          await snapshot.data!.setBool(
+                              GlobalsWidgets
+                                  .chats[getIndex(context, selectTab)],
+                              true);
+                          log("${GlobalsWidgets.chats[getIndex(context, selectTab)]} = true");
+                          setState(() {});
+                        },
+                        icon: Icon(Icons.notifications_off_sharp),
+                      );
+                    }
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
+            ),
             appBarColor: Colors.white,
             appBarPadding:
                 EdgeInsets.only(top: MediaQuery.of(context).viewPadding.top),
@@ -96,499 +158,6 @@ class _MainRouteState extends State<MainRoute> {
     );
   }
 
-  Widget? _getFloatButton(int index) {
-    //spr
-    if (index == 3) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CustomChatPage(
-                            showTitle: true,
-                            title: pages[index],
-                            history: true,
-                            chatName: "spr",
-                            subscription: widget.userEntity.subscription,
-                          )));
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-            ),
-          ),
-        ],
-      );
-    }
-    //sto
-    if (index == 4) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CustomChatPage(
-                            showTitle: true,
-                            title: pages[index],
-                            history: true,
-                            chatName: "sto",
-                            subscription: widget.userEntity.subscription,
-                          )));
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-            ),
-          )
-        ],
-      );
-    }
-    //gaz
-    if (index == 5) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CustomChatPage(
-                            showTitle: true,
-                            title: pages[index],
-                            history: true,
-                            chatName: "gaz",
-                            subscription: widget.userEntity.subscription,
-                          )));
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-            ),
-          )
-        ],
-      );
-    }
-    //swap
-    if (index == 6) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CustomChatPage(
-                            showTitle: true,
-                            title: pages[index],
-                            history: true,
-                            chatName: "swap",
-                            subscription: widget.userEntity.subscription,
-                          )));
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-            ),
-          )
-        ],
-      );
-    }
-    //salon
-    if (index == 7) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CustomChatPage(
-                            showTitle: true,
-                            title: pages[index],
-                            history: true,
-                            chatName: "salon",
-                            subscription: widget.userEntity.subscription,
-                          )));
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-            ),
-          )
-        ],
-      );
-    }
-    //shop
-    // if (index == 8) {
-    //   return Column(
-    //     mainAxisSize: MainAxisSize.min,
-    //     children: [
-    //       FloatingActionButton(
-    //         heroTag: "btn1",
-    //         onPressed: () {
-    //           Navigator.of(context)
-    //               .push(MaterialPageRoute(
-    //                   builder: (context) => const CreateShopPage()))
-    //               .then((value) {
-    //             _shopKey.currentState?.update();
-    //           });
-    //         },
-    //         shape:
-    //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-    //         backgroundColor: const Color(0xff317EFA),
-    //         child: const Icon(
-    //           Icons.add,
-    //           color: Colors.white,
-    //         ),
-    //       ),
-    //       SizedBox(
-    //         height: 2.h,
-    //       ),
-    //       FloatingActionButton(
-    //         heroTag: "btn2",
-    //         onPressed: () {
-    //           Navigator.push(
-    //               context,
-    //               MaterialPageRoute(
-    //                   builder: (context) => CustomChatPage(
-    //                       key: const Key("chat_3"),
-    //                       subscription: widget.userEntity.subscription,
-    //                       history: true,
-    //                       showTitle: true,
-    //                       title: S.of(context).page9,
-    //                       chatName: GlobalsWidgets.chats[2])));
-    //         },
-    //         shape:
-    //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-    //         backgroundColor: const Color(0xff317EFA),
-    //         child: const Icon(
-    //           Icons.chat,
-    //           color: Colors.white,
-    //         ),
-    //       ),
-    //     ],
-    //   );
-    // }
-    //eva
-    if (index == 2 && selectedModeEv != Mode.NONE) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          widget.userEntity.role == UserRole.USER
-              ? FloatingActionButton(
-                  heroTag: "btn1",
-                  onPressed: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(
-                            builder: (context) => CreateTransportationPage(
-                                  city: widget.userEntity.city,
-                                  createMode: selectedModeEv,
-                                )))
-                        .then((value) {
-                      _transportationKey.currentState?.update();
-                    });
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                  backgroundColor: const Color(0xff317EFA),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                )
-              : const SizedBox.shrink(),
-          widget.userEntity.role == UserRole.USER
-              ? SizedBox(
-                  height: 2.h,
-                )
-              : const SizedBox.shrink(),
-          FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CustomChatPage(
-                          key: const Key("chat_1"),
-                          subscription: widget.userEntity.subscription,
-                          history: true,
-                          showTitle: true,
-                          title: S.of(context).page3,
-                          chatName: GlobalsWidgets.chats[0])));
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-            ),
-          )
-        ],
-      );
-    } else if (index == 2 &&
-        selectedModeEv == Mode.NONE &&
-        widget.userEntity.role == UserRole.USER) {
-      return FloatingActionButton.extended(
-        label: const Text(
-          "Мои заказы",
-          style: TextStyle(color: Colors.white),
-        ),
-        heroTag: "btn3",
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-                  builder: (context) => const MyTaxiOrdersPage(
-                        mode: OrderMode.EV,
-                      )))
-              .then((value) {
-            _transportationKey.currentState?.update();
-          });
-        },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        backgroundColor: const Color(0xff317EFA),
-      );
-    } else if (index == 2 &&
-        selectedModeEv == Mode.NONE &&
-        widget.userEntity.role == UserRole.SPECIALIST) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton.extended(
-            label: const Text(
-              "Мои заказы",
-              style: TextStyle(color: Colors.white),
-            ),
-            heroTag: "btn3",
-            onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(
-                      builder: (context) => const MyTaxiOrdersPage(
-                            mode: OrderMode.EV,
-                          )))
-                  .then((value) {
-                _transportationKey.currentState?.update();
-              });
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-          ),
-          SizedBox(
-            height: 2.h,
-          ),
-          FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CreateOrderTaxi(
-                            city: widget.userEntity.city,
-                            mode: OrderMode.EV,
-                          )));
-            },
-            label: SizedBox(
-              width: 100.w - 20.w,
-              child: const Center(
-                child: Text(
-                  "Создать заказ +",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-          )
-        ],
-      );
-    }
-    if ((index == 1 || index == 0) && selectedMode != Mode.NONE) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          getIndex(context, selectTab) == 0
-              ? FloatingActionButton(
-                  heroTag: "btn1",
-                  onPressed: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(
-                            builder: (context) => CreateCargoPage(
-                                  city: widget.userEntity.city,
-                                  mode: selectedMode,
-                                )))
-                        .then((value) {
-                      _transportationKey.currentState?.update();
-                    });
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50)),
-                  backgroundColor: const Color(0xff317EFA),
-                  child: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                )
-              : const SizedBox.shrink(),
-          SizedBox(
-            height: 2.h,
-          ),
-          FloatingActionButton(
-            heroTag: "btn2",
-            onPressed: () {
-              switch (selectedMode) {
-                case Mode.CITY:
-                  {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CustomChatPage(
-                                  showTitle: true,
-                                  title: S.of(context).option2,
-                                  history: true,
-                                  chatName: "city",
-                                  subscription: widget.userEntity.subscription,
-                                )));
-                    break;
-                  }
-                case Mode.OUTCITY:
-                  {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CustomChatPage(
-                                showTitle: true,
-                                title: S.of(context).option1,
-                                history: true,
-                                chatName: "outcity",
-                                subscription: widget.userEntity.subscription)));
-                    break;
-                  }
-                default:
-                  null;
-              }
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-            ),
-          )
-        ],
-      );
-    } else if ((index == 1 || index == 0) &&
-        selectedMode == Mode.NONE &&
-        widget.userEntity.role == UserRole.USER) {
-      return FloatingActionButton.extended(
-        label: const Text(
-          "Мои заказы",
-          style: TextStyle(color: Colors.white),
-        ),
-        heroTag: "btn3",
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-                  builder: (context) => const MyTaxiOrdersPage(
-                        mode: OrderMode.NEW,
-                      )))
-              .then((value) {
-            _transportationKey.currentState?.update();
-          });
-        },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-        backgroundColor: const Color(0xff317EFA),
-      );
-    } else if ((index == 1 || index == 0) &&
-        selectedMode == Mode.NONE &&
-        widget.userEntity.role == UserRole.SPECIALIST) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton.extended(
-            label: const Text(
-              "Мои заказы",
-              style: TextStyle(color: Colors.white),
-            ),
-            heroTag: "btn3",
-            onPressed: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(
-                      builder: (context) => const MyTaxiOrdersPage(
-                            mode: OrderMode.NEW,
-                          )))
-                  .then((value) {
-                _transportationKey.currentState?.update();
-              });
-            },
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-          ),
-          SizedBox(
-            height: 2.h,
-          ),
-          FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CreateOrderTaxi(
-                            mode: OrderMode.NEW,
-                            city: widget.userEntity.city,
-                          )));
-            },
-            label: SizedBox(
-              width: 100.w - 20.w,
-              child: const Center(
-                child: Text(
-                  "Создать заказ +",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-            backgroundColor: const Color(0xff317EFA),
-          )
-        ],
-      );
-    }
-    return null;
-  }
-
   int getIndex(BuildContext context, String title) {
     for (int i = 0; i < pages.length; i++) {
       if (pages[i] == title) {
@@ -599,332 +168,17 @@ class _MainRouteState extends State<MainRoute> {
   }
 
   Widget _buildWidget(BuildContext context, String title) {
-    if (title.contains(S.of(context).page1)) {
-      return NotificationListener<ChangeModeNotify>(
-          onNotification: (m) {
-            selectedMode = m.mode;
-            setState(() {});
-            return true;
-          },
-          child: TransportationPage(
-            city: widget.userEntity.city,
-            sub: widget.userEntity.subscription,
-            key: _transportationKey,
-          ));
-    } else if (title.contains(S.of(context).page2)) {
-      return NotificationListener<ChangeModeNotify>(
-          onNotification: (m) {
-            selectedMode = m.mode;
-            setState(() {});
-            return true;
-          },
-          child: SearchPage(
-            city: widget.userEntity.city,
-            sub: widget.userEntity.subscription,
-          ));
-    } else if (title.contains(S.of(context).page3)) {
-      return NotificationListener<ChangeTransportModeNotify>(
-          onNotification: (m) {
-            selectedModeEv = m.mode;
-            setState(() {});
-            return true;
-          },
-          child: SearchTransportationPage(
-            city: widget.userEntity.city,
-          ));
-    } else if (title.contains(S.of(context).page4)) {
-      return const CatalogPage(
-        category: Categories.info,
-      );
-    } else if (title.contains(S.of(context).page5)) {
-      return const CatalogPage(
-        category: Categories.sto,
-      );
-    } else if (title.contains(S.of(context).page6)) {
-      return const CatalogPage(
-        category: Categories.modify,
-      );
-    } else if (title.contains(S.of(context).page7)) {
-      return CustomChatPage(
-          key: const Key("chat_2"),
-          subscription: widget.userEntity.subscription,
-          history: true,
-          showTitle: false,
-          title: S.of(context).page7,
-          chatName: GlobalsWidgets.chats[1]);
-    } else if (title.contains(S.of(context).page8)) {
-      return const CatalogPage(
-        category: Categories.swap,
-      );
-    } else if (title.contains(S.of(context).page9)) {
-      return CatalogPage(key: _shopKey, category: Categories.shop);
-    } else if (title.contains(S.of(context).page10)) {
-      return CustomChatPage(
-          key: const Key("chat_4"),
-          subscription: widget.userEntity.subscription,
-          history: true,
-          showTitle: false,
-          title: S.of(context).page10,
-          chatName: GlobalsWidgets.chats[4]);
-    } else if (title.contains(S.of(context).page11)) {
-      return const CatalogPage(
-        category: Categories.auto,
-      );
-    } else if (title.contains("Чат")) {
+    if (title.contains("Чат")) {
       return ChatPage(
         user: widget.userEntity,
       );
     }
-
-    return const SizedBox.shrink();
-  }
-
-  void addCompany(Categories category) {
-    String? temp_name;
-    String? temp_phone;
-    String? temp_street;
-    String? temp_house;
-    showDialog(
-        context: context,
-        builder: (context) => StatefulBuilder(builder: (context, state) {
-              return AlertDialog(
-                title: Text(
-                  "Добавить комапнию",
-                  style: TextStyle(fontSize: 18.sp),
-                ),
-                content: Container(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Название",
-                          style: TextStyle(
-                              fontSize: 14.sp, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        SizedBox(
-                          height: 8.h,
-                          child: TextFormField(
-                            onChanged: (value) {
-                              temp_name = value;
-                            },
-                            style: TextStyle(fontSize: 16.sp),
-                            decoration: InputDecoration(
-                              hintText: "Введите название города",
-                              hintStyle: TextStyle(fontSize: 16.sp),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        Text(
-                          "Номер телефона",
-                          style: TextStyle(
-                              fontSize: 14.sp, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        SizedBox(
-                          height: 8.h,
-                          child: TextFormField(
-                            onChanged: (value) {
-                              temp_phone = value;
-                            },
-                            style: TextStyle(fontSize: 16.sp),
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp('[0-9.,]+')),
-                            ],
-                            decoration: InputDecoration(
-                              hintText: "Введите номер телефона",
-                              hintStyle: TextStyle(fontSize: 16.sp),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Адрес",
-                            style: TextStyle(
-                                fontSize: 16.sp, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        Text(
-                          "Улица",
-                          style: TextStyle(
-                              fontSize: 14.sp, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        SizedBox(
-                          height: 8.h,
-                          child: TextFormField(
-                            onChanged: (value) {
-                              temp_street = value;
-                            },
-                            style: TextStyle(fontSize: 16.sp),
-                            decoration: InputDecoration(
-                              hintText: "Введите название",
-                              hintStyle: TextStyle(fontSize: 16.sp),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        Text(
-                          "Номер дома",
-                          style: TextStyle(
-                              fontSize: 14.sp, fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(
-                          height: 1.h,
-                        ),
-                        SizedBox(
-                          height: 8.h,
-                          child: TextFormField(
-                            onChanged: (value) {
-                              temp_house = value;
-                            },
-                            style: TextStyle(fontSize: 16.sp),
-                            decoration: InputDecoration(
-                              hintText: "Введите номер дома",
-                              hintStyle: TextStyle(fontSize: 16.sp),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(9),
-                                  borderSide: const BorderSide(
-                                      color: Color(0xffD9D9D9))),
-                            ),
-                          ),
-                        ),
-                        category == Categories.auto
-                            ? Align(
-                                alignment: Alignment.center,
-                                child: SizedBox(
-                                  height: 6.h,
-                                  child: OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xff317EFA),
-                                        side: BorderSide.none,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5))),
-                                    onPressed: () async {
-                                      final ImagePicker picker = ImagePicker();
-                                      final XFile? image =
-                                          await picker.pickImage(
-                                              source: ImageSource.gallery,
-                                              preferredCameraDevice:
-                                                  CameraDevice.rear);
-                                      if (image != null) {
-                                        file =
-                                            File.fromUri(Uri.parse(image.path));
-                                      }
-                                    },
-                                    child: const Text(
-                                      "Добавить фото",
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(S.of(context).cancel,
-                                      style: TextStyle(
-                                          color: GlobalsColor.blue,
-                                          fontSize: 14.sp))),
-                              SizedBox(
-                                width: 5.w,
-                              ),
-                              TextButton(
-                                  onPressed: () {
-                                    Dio dio = Dio();
-                                    RestClient client = RestClient(dio);
-                                    String ph = "";
-                                    if (temp_phone![0].contains("8")) {
-                                      ph += temp_phone!.replaceFirst("8", "7");
-                                    }
-                                    client
-                                        .createCompany(
-                                            GlobalsWidgets.uid,
-                                            category,
-                                            temp_name!,
-                                            ph,
-                                            temp_street!,
-                                            temp_house!,
-                                            file)
-                                        .then(
-                                            (value) => Navigator.pop(context));
-                                  },
-                                  child: Text(
-                                    S.of(context).add,
-                                    style: TextStyle(
-                                        color: GlobalsColor.blue,
-                                        fontSize: 14.sp),
-                                  )),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            })).then((value) {
-      setState(() {});
-    });
+    return CustomChatPage(
+        key: Key("key_$title"),
+        history: true,
+        showTitle: false,
+        title: title,
+        subscription: widget.userEntity.subscription,
+        chatName: GlobalsWidgets.chats[getIndex(context, title)]);
   }
 }

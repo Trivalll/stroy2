@@ -25,7 +25,6 @@ public class LocationInit implements CommandLineRunner {
         int cities = 0;
         for(CountryEntity country : countryEntityList){
             cities+= country.getCities().size();
-
         }
         log.info("Locations count {}", cities);
     }

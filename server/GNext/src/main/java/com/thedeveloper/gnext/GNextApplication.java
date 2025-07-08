@@ -1,5 +1,6 @@
 package com.thedeveloper.gnext;
 
+import com.thedeveloper.gnext.config.FirebaseProperties;
 import com.thedeveloper.gnext.config.SocketConfig;
 import com.thedeveloper.gnext.utils.storage.*;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,7 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-@EnableConfigurationProperties({SocketConfig.class, ImageProperties.class, AudioProperties.class, StoriesProperties.class, FileProperties.class})
+@EnableConfigurationProperties({FirebaseProperties.class,SocketConfig.class, ImageProperties.class, AudioProperties.class, StoriesProperties.class, FileProperties.class})
 public class GNextApplication {
 
 	public static void main(String[] args) {

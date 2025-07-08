@@ -50,15 +50,16 @@ public class MainController {
         }
     }
     @PostMapping("/login")
-    public ResponseEntity<?> loginConfirm(@RequestParam String phone, @RequestParam String uid){
-        return new ResponseEntity<>(saveUser(userService.findUserByPhone(phone), uid), HttpStatus.OK);
+    public ResponseEntity<?> loginConfirm(@RequestParam String phone, @RequestParam String uid, @RequestParam String notifyToken){
+        return new ResponseEntity<>(saveUser(userService.findUserByPhone(phone), uid, notifyToken), HttpStatus.OK);
     }
-    UserEntity saveUser(UserEntity user, String uid){
+    UserEntity saveUser(UserEntity user, String uid, String notifyToken){
         CodeEntity currentCode = codeService.currentCodeUser(user);
         currentCode.setStatus(CodeStatus.CLOSE);
         currentCode.setEndDate(new Date());
         codeService.save(currentCode);
         user.setUid(uid);
+        user.setNotifyToken(notifyToken);
         userService.save(user);
         return  user;
     }
@@ -71,10 +72,11 @@ public class MainController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
     @PostMapping("/uid")
-    public ResponseEntity<?> setUid(@RequestParam String phone, @RequestParam String uid){
+    public ResponseEntity<?> setUid(@RequestParam String phone, @RequestParam String uid, @RequestParam String notifyToken){
         UserEntity user = userService.findUserByPhone(phone);
         if(user==null) return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
         user.setUid(uid);
+        user.setNotifyToken(notifyToken);
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -120,10 +122,10 @@ public class MainController {
         } else return new ResponseEntity<>("Пользователь не существует", HttpStatus.FORBIDDEN);
     }
     @PostMapping("/forgotPassword")
-    public ResponseEntity<?> forgotPassword(@RequestParam String phone, @RequestParam String password, @RequestParam String uid) {
+    public ResponseEntity<?> forgotPassword(@RequestParam String phone, @RequestParam String password, @RequestParam String uid, @RequestParam String notifyToken) {
         UserEntity user = userService.findUserByPhone(phone);
         user.setPassword(passwordEncoder.encode(password));
-        return new ResponseEntity<>(saveUser(user, uid), HttpStatus.OK);
+        return new ResponseEntity<>(saveUser(user, uid, notifyToken), HttpStatus.OK);
     }
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestParam String uid, @RequestParam(required = false) String telegram,@RequestParam(required = false) String whatsapp){

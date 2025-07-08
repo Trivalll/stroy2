@@ -28,16 +28,19 @@ part 'RestClient.g.dart';
 //192.168.0.11
 //45.159.250.175 current
 //192.168.0.102 local
-@RestApi(baseUrl: 'http://45.159.250.175:8080/api/v1/')
+
+@RestApi(baseUrl: 'http://86.104.73.108:8080/api/v1/')
 abstract class RestClient {
   factory RestClient(Dio dio, {String baseUrl}) = _RestClient;
 
   @GET("user/login")
   Future<UserEntity> login(
       @Query("phone") String phone, @Query("password") String password);
+
   @POST("user/login")
-  Future<UserEntity> loginConfirm(
-      @Query("phone") String phone, @Query("uid") String uid);
+  Future<UserEntity> loginConfirm(@Query("phone") String phone,
+      @Query("uid") String uid, @Query("notifyToken") String notifyToken);
+
   @POST("user/register")
   @MultiPart()
   Future<String> register(
@@ -59,8 +62,8 @@ abstract class RestClient {
   @GET("user/uid")
   Future<UserEntity> getUserByUid(@Query("uid") String uid);
   @POST("user/uid")
-  Future<UserEntity> setUserUid(
-      @Query("phone") String phone, @Query("uid") String uid);
+  Future<UserEntity> setUserUid(@Query("phone") String phone,
+      @Query("uid") String uid, @Query("notifyToken") String notifyToken);
   @GET("chat/{id}")
   Future<List<MessageEntity>> getMessages(
       @Query("uid") String uid, @Path("id") String id);
@@ -70,8 +73,11 @@ abstract class RestClient {
   @GET("user/forgotPassword")
   Future<String> forgotPassword(@Query("phone") String phone);
   @POST("user/forgotPassword")
-  Future<UserEntity> forgotPasswordConfirm(@Query("phone") String phone,
-      @Query("password") String password, @Query("uid") String uid);
+  Future<UserEntity> forgotPasswordConfirm(
+      @Query("phone") String phone,
+      @Query("password") String password,
+      @Query("uid") String uid,
+      @Query("notifyToken") String notifyToken);
   @MultiPart()
   @POST("chat/file")
   Future<void> fileMessage(@Query("uid") String uid, @Query("name") String name,

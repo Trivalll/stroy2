@@ -1,10 +1,12 @@
 package com.thedeveloper.gnext.utils;
 
+import com.thedeveloper.gnext.entity.MessageEntity;
 import com.thedeveloper.gnext.entity.StorisEntity;
 import com.thedeveloper.gnext.entity.UserEntity;
 import com.thedeveloper.gnext.entity.WalletEventEntity;
 import com.thedeveloper.gnext.enums.EventResult;
 import com.thedeveloper.gnext.enums.WalletEventType;
+import com.thedeveloper.gnext.service.MessageService;
 import com.thedeveloper.gnext.service.StorisService;
 import com.thedeveloper.gnext.service.UserService;
 import com.thedeveloper.gnext.service.WalletEventService;
@@ -27,6 +29,9 @@ public class Utils {
     UserService userService;
     @Autowired
     WalletEventService walletEventService;
+    @Autowired
+    MessageService messageService;
+
     static int FREE_PERIOD = 7;
     static int SUB_DAY = 1;
     static int SUB_PRICE = 100;
@@ -34,7 +39,7 @@ public class Utils {
     public void init() throws InterruptedException {
         storiesService();
         subscriptionService();
-
+        messageService();
     }
     WalletEventEntity paySubscription(UserEntity user){
         WalletEventEntity walletEventEntity = new WalletEventEntity();
@@ -112,4 +117,27 @@ public class Utils {
             }
         }).start();
     }
+    void messageService() {
+        log.info("Start message service");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    for(MessageEntity message : messageService.findAfterTwoDays()){
+                        Duration duration = Duration.between(message.getTime().toInstant(), new Date().toInstant());
+                        if(duration.toHours()>=48){
+                            log.info("Message {} time in {}:{} content {}", message.getId(), duration.toHours(), duration.toMinutes()-duration.toHours()*60, message.getContent());
+                            messageService.delete(message);
+                        }
+                    }
+                    try {
+                        TimeUnit.HOURS.sleep(1);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }).start();
+    }
+
 }

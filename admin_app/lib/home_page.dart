@@ -32,8 +32,16 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     actions = [
-      ActionModel(name: "Локации", description: "Здесь вы можете управлять странами и городами", icon: Icons.location_city_outlined, child: ControlLocationPage()),
-      ActionModel(name: "Управление пользователями", description: "Здесь вы можете управлять пользователями сервиса", icon: Icons.person, child: ControlUsersPage()),
+      ActionModel(
+          name: "Локации",
+          description: "Здесь вы можете управлять странами и городами",
+          icon: Icons.location_city_outlined,
+          child: ControlLocationPage()),
+      ActionModel(
+          name: "Управление пользователями",
+          description: "Здесь вы можете управлять пользователями сервиса",
+          icon: Icons.person,
+          child: ControlUsersPage()),
       ActionModel(
           name: "Чаты",
           description: "Здесь вы можете управлять чатами",
@@ -50,7 +58,12 @@ class _HomePage extends State<HomePage> {
             selectMode: true,
           ),
           secondChild: ControlCompaniesPage),
-      ActionModel(name: "Фильтр чата", description: "Здесь вы можете добавить слова, которые запрещены в чате", icon: Icons.filter_alt_outlined, child: ControlChatFilterPage()),
+      ActionModel(
+          name: "Фильтр чата",
+          description:
+              "Здесь вы можете добавить слова, которые запрещены в чате",
+          icon: Icons.filter_alt_outlined,
+          child: ControlChatFilterPage()),
       ActionModel(
           name: "Кошельки",
           description: "Здесь вы можете управлять кошельками пользователей",
@@ -65,8 +78,9 @@ class _HomePage extends State<HomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "Админ панель GNext",
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, color: mainColor),
+          "Админ панель Stroy Messenger",
+          style: TextStyle(
+              fontSize: 18.sp, fontWeight: FontWeight.bold, color: mainColor),
         ),
       ),
       body: SingleChildScrollView(
@@ -80,14 +94,18 @@ class _HomePage extends State<HomePage> {
                     Flexible(
                         fit: FlexFit.tight,
                         child: Container(
-                          decoration: BoxDecoration(color: mainColor, borderRadius: BorderRadius.circular(15), boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3), // changes position of shadow
-                            ),
-                          ]),
+                          decoration: BoxDecoration(
+                              color: mainColor,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ]),
                           child: Padding(
                             padding: EdgeInsets.all(2.h),
                             child: Column(
@@ -95,19 +113,26 @@ class _HomePage extends State<HomePage> {
                                 ClipOval(
                                   child: SizedBox.fromSize(
                                     size: Size.fromRadius(10.w), // Image radius
-                                    child: Image.network(getUserPhoto(), fit: BoxFit.cover),
+                                    child: Image.network(getUserPhoto(),
+                                        fit: BoxFit.cover),
                                   ),
                                 ),
                                 Text(
                                   "${user.name} ${user.surname}",
-                                  style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   height: 1.h,
                                 ),
                                 Text(
                                   "+${user.phone}",
-                                  style: TextStyle(color: Colors.white, fontSize: 16.sp, fontWeight: FontWeight.bold),
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 SizedBox(
                                   height: 2.h,
@@ -115,12 +140,19 @@ class _HomePage extends State<HomePage> {
                                 Container(
                                   height: 4.h,
                                   width: 20.w,
-                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: Color(0xFFAEB4B7), width: 0.3.w)),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      border: Border.all(
+                                          color: Color(0xFFAEB4B7),
+                                          width: 0.3.w)),
                                   child: Center(
                                     child: Text(
                                       getRole(user.role),
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12.sp, color: Colors.white),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.sp,
+                                          color: Colors.white),
                                     ),
                                   ),
                                 ),
@@ -134,17 +166,26 @@ class _HomePage extends State<HomePage> {
                                     surname = "";
                                     image = null;
                                     await FirebaseAuth.instance.signOut();
-                                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginPage()), (route) => false);
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => LoginPage()),
+                                        (route) => false);
                                   },
                                   child: Container(
                                     height: 4.h,
                                     width: 20.w,
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), color: Colors.red),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        color: Colors.red),
                                     child: Center(
                                       child: Text(
                                         "Выход",
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp, color: Colors.white),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.sp,
+                                            color: Colors.white),
                                       ),
                                     ),
                                   ),
@@ -159,14 +200,18 @@ class _HomePage extends State<HomePage> {
                     Flexible(
                         fit: FlexFit.tight,
                         child: Container(
-                          decoration: BoxDecoration(color: mainColor, borderRadius: BorderRadius.circular(15), boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3), // changes position of shadow
-                            ),
-                          ]),
+                          decoration: BoxDecoration(
+                              color: mainColor,
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 5,
+                                  blurRadius: 7,
+                                  offset: Offset(
+                                      0, 3), // changes position of shadow
+                                ),
+                              ]),
                           child: Padding(
                             padding: EdgeInsets.all(2.h),
                             child: FutureBuilder(
@@ -178,18 +223,24 @@ class _HomePage extends State<HomePage> {
                                     children: [
                                       Text(
                                         "Статистика:",
-                                        style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(
                                         height: 2.h,
                                       ),
-                                      _value("Всего пользователей", "${stat.userCount}"),
+                                      _value("Всего пользователей",
+                                          "${stat.userCount}"),
                                       _value("Чаты", "${stat.chatCount}"),
-                                      _value("Сообщения", "${stat.messagesCount}"),
+                                      _value(
+                                          "Сообщения", "${stat.messagesCount}"),
                                       _value("Страны", "${stat.countryCount}"),
                                       _value("Города", "${stat.cityCount}"),
                                       _value("Все заказы", "${stat.allOrders}"),
-                                      _value("Активные заказы", "${stat.activeOrders}"),
+                                      _value("Активные заказы",
+                                          "${stat.activeOrders}"),
                                     ],
                                   );
                                 } else {
@@ -197,7 +248,10 @@ class _HomePage extends State<HomePage> {
                                     children: [
                                       Text(
                                         "Статистика:",
-                                        style: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(
                                         height: 2.h,
@@ -225,18 +279,24 @@ class _HomePage extends State<HomePage> {
               Container(
                 height: 8.h,
                 width: double.maxFinite,
-                decoration: BoxDecoration(color: mainColor, borderRadius: BorderRadius.circular(50), boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3), // changes position of shadow
-                  ),
-                ]),
+                decoration: BoxDecoration(
+                    color: mainColor,
+                    borderRadius: BorderRadius.circular(50),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ]),
                 child: Center(
                   child: Text(
                     "Возможности",
-                    style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 22.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
               ),
@@ -253,7 +313,10 @@ class _HomePage extends State<HomePage> {
                     crossAxisSpacing: 2.w,
                     mainAxisSpacing: 2.w,
                     shrinkWrap: true,
-                    children: actions.map((e) => action(e.icon, e.name, e.description, e.child, e.secondChild)).toList(),
+                    children: actions
+                        .map((e) => action(e.icon, e.name, e.description,
+                            e.child, e.secondChild))
+                        .toList(),
                   );
                 }),
               )
@@ -264,11 +327,13 @@ class _HomePage extends State<HomePage> {
     );
   }
 
-  Widget action(IconData icon, String name, String description, StatefulWidget child, var secondChild) {
+  Widget action(IconData icon, String name, String description,
+      StatefulWidget child, var secondChild) {
     return InkWell(
       borderRadius: BorderRadius.circular(50),
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => child)).then((value) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => child))
+            .then((value) {
           if (secondChild != null) {
             if (secondChild == ControlChatsPage && value != null) {
               Navigator.push(
@@ -327,7 +392,10 @@ class _HomePage extends State<HomePage> {
                   delayBefore: const Duration(milliseconds: 500),
                   numberOfReps: 3,
                   pauseBetween: const Duration(milliseconds: 50),
-                  style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 16.sp),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      fontSize: 16.sp),
                   textAlign: TextAlign.center,
                   selectable: false,
                 ),
@@ -338,7 +406,8 @@ class _HomePage extends State<HomePage> {
               Expanded(
                   child: Text(
                 "*$description",
-                style: TextStyle(fontSize: 12.sp, color: Colors.white.withOpacity(0.8)),
+                style: TextStyle(
+                    fontSize: 12.sp, color: Colors.white.withOpacity(0.8)),
               ))
             ],
           ),
@@ -359,11 +428,17 @@ class _HomePage extends State<HomePage> {
       children: [
         Text(
           "$name:",
-          style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.bold),
         ),
         Text(
           value,
-          style: TextStyle(color: Colors.white, fontSize: 15.sp, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.bold),
         ),
       ],
     );

@@ -32,7 +32,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPage extends State<RegisterPage> with TickerProviderStateMixin {
-  String? name, surname, phone, number, password;
+  String? name, surname, phone, password;
   int selectedRole = 0;
   CountryEntity? selectedCountry;
   CityEntity? selectedCity;
@@ -226,35 +226,8 @@ class _RegisterPage extends State<RegisterPage> with TickerProviderStateMixin {
                   ? const SizedBox.shrink()
                   : _selectCity(cities!),
               selectedRole == 1
-                  ? Text(
-                      S.of(context).gos_number,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    )
-                  : const SizedBox.shrink(),
-              selectedRole == 1
                   ? SizedBox(
                       height: 1.h,
-                    )
-                  : const SizedBox.shrink(),
-              selectedRole == 1
-                  ? SizedBox(
-                      height: 8.h,
-                      child: TextFormField(
-                        onChanged: (value) {
-                          number = value;
-                        },
-                        decoration: InputDecoration(
-                          hintText: S.of(context).gos_number_,
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(9),
-                              borderSide:
-                                  const BorderSide(color: Color(0xffD9D9D9))),
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(9),
-                              borderSide:
-                                  const BorderSide(color: Color(0xffD9D9D9))),
-                        ),
-                      ),
                     )
                   : const SizedBox.shrink(),
               selectedRole == 1
@@ -289,10 +262,7 @@ class _RegisterPage extends State<RegisterPage> with TickerProviderStateMixin {
               SizedBox(
                 height: 1.h,
               ),
-              selectedRole == 0
-                  ? _photo(
-                      S.of(context).photo_profile, S.of(context).photo_profile_)
-                  : _photo(S.of(context).photo_gos, S.of(context).photo_gos_),
+              _photo(S.of(context).photo_profile, S.of(context).photo_profile_),
               SizedBox(
                 height: 1.h,
               ),
@@ -325,7 +295,7 @@ class _RegisterPage extends State<RegisterPage> with TickerProviderStateMixin {
                 width: double.maxFinite,
                 child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                        backgroundColor: const Color(0xff317EFA),
+                        backgroundColor: GlobalsColor.blue,
                         side: BorderSide.none,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(9))),
@@ -364,7 +334,7 @@ class _RegisterPage extends State<RegisterPage> with TickerProviderStateMixin {
                                 password!,
                                 name!,
                                 surname!,
-                                number,
+                                null,
                                 roles[selectedRole],
                                 selectedCountry!.id,
                                 selectedCity!.id,
@@ -378,12 +348,24 @@ class _RegisterPage extends State<RegisterPage> with TickerProviderStateMixin {
                                 builder: (context) => CodeEnterLoginPage(
                                     code: value,
                                     phone: phoneNumber,
-                                    niceCode: () {
+                                    niceCode: () async {
                                       Dio dio = Dio();
                                       RestClient client = RestClient(dio);
+                                      String notifyId;
+                                      if (Platform.isAndroid) {
+                                        notifyId = await FirebaseMessaging
+                                                .instance
+                                                .getToken() ??
+                                            "Null";
+                                      } else {
+                                        notifyId = await FirebaseMessaging
+                                                .instance
+                                                .getAPNSToken() ??
+                                            "Null";
+                                      }
                                       client
-                                          .loginConfirm(
-                                              phoneNumber, GlobalsWidgets.uid)
+                                          .loginConfirm(phoneNumber,
+                                              GlobalsWidgets.uid, notifyId)
                                           .then((value) async {
                                         SharedPreferences pref =
                                             await SharedPreferences

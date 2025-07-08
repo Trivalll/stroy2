@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface TransportationRepository extends JpaRepository<TransportationEntity, Long> {
-    List<TransportationEntity> findTransportationEntitiesByCreatorAndOutCityAndCity(UserEntity creator, boolean outcity, CityEntity city);
+    List<TransportationEntity> findTransportationEntitiesByCreatorAndOutCityAndCityAndActive(UserEntity creator, boolean outcity, CityEntity city, boolean active);
     List<TransportationEntity> findTransportationEntitiesByActiveAndCityAndOutCity(boolean active, CityEntity city, boolean outcity);
     TransportationEntity findTransportationEntityById(Long id);
 }

@@ -4,7 +4,8 @@ import 'package:flutter/cupertino.dart';
 class GlobalsWidgets {
   //45.159.250.175
   //192.168.0.102
-  static String ip = "45.159.250.175";
+  //
+  static String ip = "86.104.73.108";
   static String uid = "";
   static String name = "";
   static String surname = "";
@@ -14,11 +15,38 @@ class GlobalsWidgets {
   static UserRole role = UserRole.USER;
   static String? image;
   static List<String> chats = [
-    "evacuator",
-    "razbor",
-    "market",
-    "global",
-    "gruz"
+    "svar",
+    "bet",
+    "bul",
+    "meb",
+    "razn",
+    "sles",
+    "proect",
+    "gaz",
+    "stec",
+    "park",
+    "el",
+    "vent",
+    "trash",
+    "tok",
+    "frez",
+    "mal",
+    "zem",
+    "obl",
+    "stol",
+    "geo",
+    "plot",
+    "san",
+    "strop",
+    "kran",
+    "cum",
+    "pech",
+    "mon",
+    "krov",
+    "otd",
+    "moto",
+    "other",
+    "global"
   ];
   static String getUserPhoto() {
     if (GlobalsWidgets.image != null && GlobalsWidgets.image!.isNotEmpty) {

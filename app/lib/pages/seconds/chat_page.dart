@@ -31,11 +31,13 @@ class CustomChatPage extends StatefulWidget {
   final bool? companyChat;
   final bool showTitle;
   final UserRole? readOnlyUser;
+  final UserRole? writeOnly;
   final Function(int count)? onUpdate;
   const CustomChatPage(
       {this.companyChat,
       this.onUpdate,
       this.readOnlyUser,
+      this.writeOnly,
       required this.showTitle,
       required this.title,
       required this.chatName,
@@ -128,7 +130,11 @@ class _CustomChatPage extends State<CustomChatPage> {
                                         children: [
                                           message.type == MessageType.USER
                                               ? InkWell(
-                                                  onTap: subscription &&
+                                                  onTap: (subscription ||
+                                                              GlobalsWidgets
+                                                                      .role ==
+                                                                  UserRole
+                                                                      .USER) &&
                                                           (message.user.role !=
                                                                   UserRole
                                                                       .ADMIN &&
@@ -193,11 +199,9 @@ class _CustomChatPage extends State<CustomChatPage> {
                                                                         textAlign:
                                                                             TextAlign.end,
                                                                         style: TextStyle(
-                                                                            fontSize: 12
-                                                                                .sp,
-                                                                            color: _getType(message) == BubbleType.sendBubble
-                                                                                ? Colors.white.withOpacity(0.6)
-                                                                                : Colors.black.withOpacity(0.6)),
+                                                                            fontSize:
+                                                                                12.sp,
+                                                                            color: Colors.black.withOpacity(0.6)),
                                                                       )
                                                                     : const SizedBox
                                                                         .shrink(),
@@ -222,16 +226,14 @@ class _CustomChatPage extends State<CustomChatPage> {
                                                                       : message.user.role == UserRole.MANAGER
                                                                           ? message.user.name
                                                                           : widget.title,
-                                                                  style: TextStyle(
-                                                                      color: _getType(message) ==
-                                                                              BubbleType
-                                                                                  .sendBubble
-                                                                          ? Colors
-                                                                              .white
-                                                                          : Colors
-                                                                              .black),
+                                                                  style: const TextStyle(
+                                                                      color: Colors
+                                                                          .black),
                                                                 ),
-                                                                subscription &&
+                                                                (subscription ||
+                                                                            GlobalsWidgets.role ==
+                                                                                UserRole
+                                                                                    .USER) &&
                                                                         message.user.uid !=
                                                                             GlobalsWidgets
                                                                                 .uid &&
@@ -245,7 +247,10 @@ class _CustomChatPage extends State<CustomChatPage> {
                                                                       )
                                                                     : const SizedBox
                                                                         .shrink(),
-                                                                subscription &&
+                                                                (subscription ||
+                                                                            GlobalsWidgets.role ==
+                                                                                UserRole
+                                                                                    .USER) &&
                                                                         message.user.uid !=
                                                                             GlobalsWidgets
                                                                                 .uid &&
@@ -283,11 +288,9 @@ class _CustomChatPage extends State<CustomChatPage> {
                                                                         textAlign:
                                                                             TextAlign.end,
                                                                         style: TextStyle(
-                                                                            fontSize: 12
-                                                                                .sp,
-                                                                            color: _getType(message) == BubbleType.sendBubble
-                                                                                ? Colors.white.withOpacity(0.6)
-                                                                                : Colors.black.withOpacity(0.6)),
+                                                                            fontSize:
+                                                                                12.sp,
+                                                                            color: Colors.black.withOpacity(0.6)),
                                                                       )
                                                                     : const SizedBox
                                                                         .shrink()
@@ -296,14 +299,8 @@ class _CustomChatPage extends State<CustomChatPage> {
                                                             Text(
                                                               message.content,
                                                               style: TextStyle(
-                                                                  color: _getType(
-                                                                              message) ==
-                                                                          BubbleType
-                                                                              .sendBubble
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black),
+                                                                  color: Colors
+                                                                      .black),
                                                             ),
                                                           ],
                                                         ),
@@ -312,7 +309,11 @@ class _CustomChatPage extends State<CustomChatPage> {
                                               : message.type ==
                                                       MessageType.AUDIO
                                                   ? InkWell(
-                                                      onTap: subscription &&
+                                                      onTap: (subscription ||
+                                                                  GlobalsWidgets
+                                                                          .role ==
+                                                                      UserRole
+                                                                          .USER) &&
                                                               (message.user
                                                                           .role !=
                                                                       UserRole
@@ -655,223 +656,208 @@ class _CustomChatPage extends State<CustomChatPage> {
                       })),
               readOnlyUser != null && readOnlyUser == GlobalsWidgets.role
                   ? const SizedBox.shrink()
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: isRecording
-                              ? AudioWaveforms(
-                                  enableGesture: true,
-                                  size: Size(50.w, 50),
-                                  recorderController: recorderController,
-                                  waveStyle: const WaveStyle(
-                                    waveColor: Colors.white,
-                                    extendWaveform: true,
-                                    showMiddleLine: false,
+                  : widget.writeOnly != null &&
+                          widget.writeOnly != GlobalsWidgets.role
+                      ? SizedBox.shrink()
+                      : GlobalsWidgets.role == UserRole.SPECIALIST &&
+                              !subscription
+                          ? const Text(
+                              "Для возможности писать в чат, подключите подписку",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontWeight: FontWeight.bold))
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 200),
+                                  child: isRecording
+                                      ? AudioWaveforms(
+                                          enableGesture: true,
+                                          size: Size(50.w, 50),
+                                          recorderController:
+                                              recorderController,
+                                          waveStyle: const WaveStyle(
+                                            waveColor: Colors.white,
+                                            extendWaveform: true,
+                                            showMiddleLine: false,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                            color: const Color(0xFF1E1B26),
+                                          ),
+                                          padding:
+                                              const EdgeInsets.only(left: 18),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                        )
+                                      : Container(
+                                          width: 100.w - 25.w,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF1E1B26),
+                                            borderRadius:
+                                                BorderRadius.circular(12.0),
+                                          ),
+                                          padding:
+                                              const EdgeInsets.only(left: 18),
+                                          //margin: const EdgeInsets.symmetric(horizontal: 15),
+                                          child: TextField(
+                                            readOnly: false,
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                            controller: _controller,
+                                            decoration: InputDecoration(
+                                              hintText: S.of(context).text,
+                                              hintStyle: const TextStyle(
+                                                  color: Colors.white54),
+                                              border: InputBorder.none,
+                                              prefixIcon: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                onPressed: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          title: Text(S
+                                                              .of(context)
+                                                              .add_photo),
+                                                          content: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              SizedBox(
+                                                                width: double
+                                                                    .maxFinite,
+                                                                height: 5.h,
+                                                                child:
+                                                                    OutlinedButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          final ImagePicker
+                                                                              picker =
+                                                                              ImagePicker();
+                                                                          final XFile?
+                                                                              image =
+                                                                              await picker.pickImage(source: ImageSource.gallery, preferredCameraDevice: CameraDevice.rear);
+                                                                          debugPrint(
+                                                                              "Media ${image!.name}");
+                                                                          File
+                                                                              file =
+                                                                              File.fromUri(Uri.parse(image.path));
+                                                                          Dio dio =
+                                                                              Dio();
+                                                                          RestClient
+                                                                              client =
+                                                                              RestClient(dio);
+                                                                          client.fileMessage(GlobalsWidgets.uid, widget.chatName, MessageType.PHOTO, file).then(
+                                                                              (value) {
+                                                                            getMessages();
+                                                                            Navigator.pop(context);
+                                                                          }).onError((error,
+                                                                              stackTrace) {
+                                                                            debugPrint("Error image $error");
+                                                                          });
+                                                                        },
+                                                                        style: OutlinedButton.styleFrom(
+                                                                            side: BorderSide
+                                                                                .none,
+                                                                            backgroundColor: Colors
+                                                                                .white),
+                                                                        child:
+                                                                            Text(
+                                                                          S.of(context).photo,
+                                                                          style:
+                                                                              const TextStyle(color: Color(0xff317EFA)),
+                                                                        )),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 1.h,
+                                                              ),
+                                                              SizedBox(
+                                                                width: double
+                                                                    .maxFinite,
+                                                                height: 5.h,
+                                                                child:
+                                                                    OutlinedButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          final ImagePicker
+                                                                              picker =
+                                                                              ImagePicker();
+                                                                          final XFile?
+                                                                              image =
+                                                                              await picker.pickImage(source: ImageSource.camera);
+                                                                          debugPrint(
+                                                                              "Media ${image!.name}");
+                                                                          File
+                                                                              file =
+                                                                              File.fromUri(Uri.parse(image.path));
+                                                                          Dio dio =
+                                                                              Dio();
+                                                                          RestClient
+                                                                              client =
+                                                                              RestClient(dio);
+                                                                          client.fileMessage(GlobalsWidgets.uid, widget.chatName, MessageType.PHOTO, file).then(
+                                                                              (value) {
+                                                                            getMessages();
+                                                                            Navigator.pop(context);
+                                                                          }).onError((error,
+                                                                              stackTrace) {
+                                                                            debugPrint("Error image $error");
+                                                                          });
+                                                                        },
+                                                                        style: OutlinedButton.styleFrom(
+                                                                            side: BorderSide
+                                                                                .none,
+                                                                            backgroundColor: Colors
+                                                                                .white),
+                                                                        child:
+                                                                            Text(
+                                                                          S.of(context).photo_,
+                                                                          style:
+                                                                              const TextStyle(color: Color(0xff317EFA)),
+                                                                        )),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      });
+                                                },
+                                                icon: Icon(
+                                                  isRecording
+                                                      ? Icons.refresh
+                                                      : Icons
+                                                          .photo_camera_outlined,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              suffixIcon: IconButton(
+                                                padding: EdgeInsets.zero,
+                                                onPressed: _refreshWave,
+                                                icon: Icon(
+                                                  isRecording
+                                                      ? Icons.refresh
+                                                      : Icons.send,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          )),
+                                ),
+                                SizedBox(width: 1.w),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: _startOrStopRecording,
+                                  icon: Icon(
+                                    isRecording ? Icons.stop : Icons.mic,
+                                    size: 8.w,
                                   ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    color: const Color(0xFF1E1B26),
-                                  ),
-                                  padding: const EdgeInsets.only(left: 18),
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 15),
-                                )
-                              : Container(
-                                  width: 100.w - 25.w,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF1E1B26),
-                                    borderRadius: BorderRadius.circular(12.0),
-                                  ),
-                                  padding: const EdgeInsets.only(left: 18),
-                                  //margin: const EdgeInsets.symmetric(horizontal: 15),
-                                  child: TextField(
-                                    readOnly: false,
-                                    style: const TextStyle(color: Colors.white),
-                                    controller: _controller,
-                                    decoration: InputDecoration(
-                                      hintText: S.of(context).text,
-                                      hintStyle: const TextStyle(
-                                          color: Colors.white54),
-                                      border: InputBorder.none,
-                                      prefixIcon: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        onPressed: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  title: Text(
-                                                      S.of(context).add_photo),
-                                                  content: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: double.maxFinite,
-                                                        height: 5.h,
-                                                        child: OutlinedButton(
-                                                            onPressed:
-                                                                () async {
-                                                              final ImagePicker
-                                                                  picker =
-                                                                  ImagePicker();
-                                                              final XFile? image = await picker.pickImage(
-                                                                  source:
-                                                                      ImageSource
-                                                                          .gallery,
-                                                                  preferredCameraDevice:
-                                                                      CameraDevice
-                                                                          .rear);
-                                                              debugPrint(
-                                                                  "Media ${image!.name}");
-                                                              File file = File
-                                                                  .fromUri(Uri
-                                                                      .parse(image
-                                                                          .path));
-                                                              Dio dio = Dio();
-                                                              RestClient
-                                                                  client =
-                                                                  RestClient(
-                                                                      dio);
-                                                              client
-                                                                  .fileMessage(
-                                                                      GlobalsWidgets
-                                                                          .uid,
-                                                                      widget
-                                                                          .chatName,
-                                                                      MessageType
-                                                                          .PHOTO,
-                                                                      file)
-                                                                  .then(
-                                                                      (value) {
-                                                                getMessages();
-                                                                Navigator.pop(
-                                                                    context);
-                                                              }).onError((error,
-                                                                      stackTrace) {
-                                                                debugPrint(
-                                                                    "Error image $error");
-                                                              });
-                                                            },
-                                                            style: OutlinedButton.styleFrom(
-                                                                side: BorderSide
-                                                                    .none,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .white),
-                                                            child: Text(
-                                                              S
-                                                                  .of(context)
-                                                                  .photo,
-                                                              style: const TextStyle(
-                                                                  color: Color(
-                                                                      0xff317EFA)),
-                                                            )),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 1.h,
-                                                      ),
-                                                      SizedBox(
-                                                        width: double.maxFinite,
-                                                        height: 5.h,
-                                                        child: OutlinedButton(
-                                                            onPressed:
-                                                                () async {
-                                                              final ImagePicker
-                                                                  picker =
-                                                                  ImagePicker();
-                                                              final XFile?
-                                                                  image =
-                                                                  await picker
-                                                                      .pickImage(
-                                                                          source:
-                                                                              ImageSource.camera);
-                                                              debugPrint(
-                                                                  "Media ${image!.name}");
-                                                              File file = File
-                                                                  .fromUri(Uri
-                                                                      .parse(image
-                                                                          .path));
-                                                              Dio dio = Dio();
-                                                              RestClient
-                                                                  client =
-                                                                  RestClient(
-                                                                      dio);
-                                                              client
-                                                                  .fileMessage(
-                                                                      GlobalsWidgets
-                                                                          .uid,
-                                                                      widget
-                                                                          .chatName,
-                                                                      MessageType
-                                                                          .PHOTO,
-                                                                      file)
-                                                                  .then(
-                                                                      (value) {
-                                                                getMessages();
-                                                                Navigator.pop(
-                                                                    context);
-                                                              }).onError((error,
-                                                                      stackTrace) {
-                                                                debugPrint(
-                                                                    "Error image $error");
-                                                              });
-                                                            },
-                                                            style: OutlinedButton.styleFrom(
-                                                                side: BorderSide
-                                                                    .none,
-                                                                backgroundColor:
-                                                                    Colors
-                                                                        .white),
-                                                            child: Text(
-                                                              S
-                                                                  .of(context)
-                                                                  .photo_,
-                                                              style: const TextStyle(
-                                                                  color: Color(
-                                                                      0xff317EFA)),
-                                                            )),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              });
-                                        },
-                                        icon: Icon(
-                                          isRecording
-                                              ? Icons.refresh
-                                              : Icons.photo_camera_outlined,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      suffixIcon: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        onPressed: _refreshWave,
-                                        icon: Icon(
-                                          isRecording
-                                              ? Icons.refresh
-                                              : Icons.send,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  )),
-                        ),
-                        SizedBox(width: 1.w),
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: _startOrStopRecording,
-                          icon: Icon(
-                            isRecording ? Icons.stop : Icons.mic,
-                            size: 8.w,
-                          ),
-                          color: Colors.black,
-                        ),
-                      ],
-                    )
+                                  color: Colors.black,
+                                ),
+                              ],
+                            )
             ],
           ),
         ));
@@ -972,10 +958,10 @@ class _CustomChatPage extends State<CustomChatPage> {
             }
             List<Widget> widgets = [];
             debugPrint("Role ${GlobalsWidgets.role}");
-            if (GlobalsWidgets.role != UserRole.USER && subscription) {
-              widgets.add(currentUser(
-                  "${GlobalsWidgets.name} (Вы)", currentUserStories.isEmpty));
-            }
+
+            widgets.add(currentUser(
+                "${GlobalsWidgets.name} (Вы)", currentUserStories.isEmpty));
+
             widgets.addAll(list
                 .map((e) =>
                     user(e.user!.name, false, true, e.index!, e.user!.photo))
@@ -1424,8 +1410,9 @@ class _CustomChatPage extends State<CustomChatPage> {
 
   Color _getBackGround(MessageEntity message) {
     BubbleType type = _getType(message);
+    return const Color(0xffF8F8FA);
     if (type == BubbleType.sendBubble) {
-      return const Color(0xff317EFA);
+      return GlobalsColor.blue;
     } else {
       return const Color(0xffF8F8FA);
     }

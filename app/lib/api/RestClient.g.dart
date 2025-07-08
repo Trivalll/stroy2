@@ -13,7 +13,7 @@ class _RestClient implements RestClient {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://45.159.250.175:8080/api/v1/';
+    baseUrl ??= 'http://86.104.73.108:8080/api/v1/';
   }
 
   final Dio _dio;
@@ -57,11 +57,13 @@ class _RestClient implements RestClient {
   Future<UserEntity> loginConfirm(
     String phone,
     String uid,
+    String notifyToken,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'phone': phone,
       r'uid': uid,
+      r'notifyToken': notifyToken,
     };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
@@ -214,11 +216,13 @@ class _RestClient implements RestClient {
   Future<UserEntity> setUserUid(
     String phone,
     String uid,
+    String notifyToken,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'phone': phone,
       r'uid': uid,
+      r'notifyToken': notifyToken,
     };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
@@ -338,12 +342,14 @@ class _RestClient implements RestClient {
     String phone,
     String password,
     String uid,
+    String notifyToken,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'phone': phone,
       r'password': password,
       r'uid': uid,
+      r'notifyToken': notifyToken,
     };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
+import 'dart:math' show Random;
 
 import 'package:app/api/RestClient.dart';
 import 'package:app/api/entity/UserEntity.dart';
@@ -14,13 +16,54 @@ import 'package:app/utils/localization/localization_block.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  _showNotification(message);
+  log("Message resive chat ${message.data['chat']} title[${message.data['title']}] body[${message.data['body']}]");
+}
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+Future<void> _requestPermissions() async {
+  if (Platform.isIOS || Platform.isMacOS) {
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin>()
+        ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+  } else if (Platform.isAndroid) {
+    final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+    final bool? grantedNotificationPermission =
+        await androidImplementation?.requestNotificationsPermission();
+  }
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,14 +72,41 @@ Future<void> main() async {
   );
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   FirebaseAuth auth = FirebaseAuth.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher_foreground');
+
+  DarwinInitializationSettings initializationSettingsDarwin =
+      const DarwinInitializationSettings(
+    requestAlertPermission: false,
+    requestBadgePermission: false,
+    requestSoundPermission: false,
+  );
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
+    macOS: initializationSettingsDarwin,
+  );
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+  );
+  log("${await FirebaseMessaging.instance.getToken()}");
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  _requestPermissions();
   if (auth.currentUser != null) {
     debugPrint("Current user not null");
     GlobalsWidgets.uid = auth.currentUser!.uid;
     Dio dio = Dio();
     RestClient client = RestClient(dio);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    client.setUserUid(
-        sharedPreferences.getString("phone") ?? "null", GlobalsWidgets.uid);
+    String notifyId;
+    if (Platform.isAndroid) {
+      notifyId = await FirebaseMessaging.instance.getToken() ?? "Null";
+    } else {
+      notifyId = await FirebaseMessaging.instance.getAPNSToken() ?? "Null";
+    }
+    client.setUserUid(sharedPreferences.getString("phone") ?? "null",
+        GlobalsWidgets.uid, notifyId);
   } else {
     (await SharedPreferences.getInstance()).remove("phone");
     debugPrint("Current user null");
@@ -44,6 +114,31 @@ Future<void> main() async {
   runApp(MultiBlocProvider(
       providers: [BlocProvider(create: (_) => LanguageBloc())],
       child: const MyApp()));
+}
+
+Future<void> _showNotification(RemoteMessage remotemessage) async {
+  log("From ${remotemessage.from} id ${remotemessage.messageId}");
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.reload();
+  const AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails(
+          'stroy_messenger_chanel', 'Уведомления в чатах',
+          channelDescription: 'Уведомления в чатах',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker');
+  const NotificationDetails notificationDetails =
+      NotificationDetails(android: androidNotificationDetails);
+  log("${prefs.getBool(remotemessage.data["chat"])} [${remotemessage.data["chat"]}]");
+  if (prefs.getBool(remotemessage.data["chat"]) ?? false) {
+    await flutterLocalNotificationsPlugin.cancelAll();
+    await flutterLocalNotificationsPlugin.show(
+        Random().nextInt(100),
+        remotemessage.data["title"],
+        remotemessage.data['body'],
+        notificationDetails,
+        payload: 'item x');
+  }
 }
 
 class MyApp extends StatefulWidget {

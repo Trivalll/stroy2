@@ -15,7 +15,7 @@ public class TransportationService {
     TransportationRepository repository;
 
     public List<TransportationEntity> findByCreatorAndCityAndOutcity(UserEntity creator, boolean outcity){
-        return repository.findTransportationEntitiesByCreatorAndOutCityAndCity(creator, outcity, creator.getCity());
+        return repository.findTransportationEntitiesByCreatorAndOutCityAndCityAndActive(creator, outcity, creator.getCity(), true);
     }
     public List<TransportationEntity> findActive(UserEntity user, boolean outcity){
         return repository.findTransportationEntitiesByActiveAndCityAndOutCity(true, user.getCity(), outcity);
